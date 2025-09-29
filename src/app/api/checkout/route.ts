@@ -1,0 +1,32 @@
+import { NextRequest, NextResponse } from "next/server";
+import { stripe } from "@/lib/stripe";
+export async function POST(req: NextRequest) {
+  try {
+    const { product } = await req.json();
+    const config:any = {
+      audit: { name: "AI Website Audit", amount: 15900, description: "AI Website Audit — NZD $159 (GST incl.)" },
+      gbp:   { name: "GBP Optimisation", amount: 35000, description: "Google Business Profile Optimisation — NZD $350 (GST incl.)" }
+    };
+    const info = config[product];
+    if (!info) return NextResponse.json({ error: "Invalid product" }, { status: 400 });
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      currency: "nzd",
+      line_items: [{
+        price_data: { currency:"nzd", unit_amount: info.amount, tax_behavior:"inclusive", product_data:{ name: info.name, description: info.description } },
+        quantity: 1
+      }],
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/${product}`,
+      customer_creation: "if_required",
+      phone_number_collection: { enabled: true },
+      billing_address_collection: "auto",
+      automatic_tax: { enabled: true },
+      metadata: { product }
+    });
+    return NextResponse.json({ url: session.url }, { status: 200 });
+  } catch (err:any) {
+    console.error(err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}

@@ -1,0 +1,19 @@
+import { BuyButton } from "@/components/BuyButton";
+export const metadata = { title: "Google Business Profile Optimisation — Traffik.nz", description: "$350 GBP optimisation — category, attributes, media, reviews & conversions." };
+export default function Page() {
+  return (
+    <main>
+      <section className="hero-fw" role="banner" aria-label="Google Business Profile Optimisation">
+        <img src="/images/gbp-hero.jpg" alt="GBP Optimisation banner" className="hero-img" />
+        <div className="hero-overlay"></div>
+        <div className="hero-inner">
+          <div>
+            <h1 className="hero-title">Google Business Profile Optimisation — $350</h1>
+            <p className="hero-lead">Improve Maps rankings and convert profile views into calls, bookings, and directions.</p>
+            <div className="mt-4"><BuyButton product="gbp">Get GBP Optimisation — $350</BuyButton></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
