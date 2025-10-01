@@ -1,0 +1,1 @@
+export default function Page(){return(<main className="container py-14"><h1 className="text-3xl md:text-4xl font-extrabold text-brand-accent">Contact</h1><p className="mt-2 text-white/80">Email <a className="underline" href="mailto:hello@traffik.nz">hello@traffik.nz</a> or call <a className="underline" href="tel:+64212968586">021 296 8586</a>.</p></main>);}

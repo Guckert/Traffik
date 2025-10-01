@@ -1,0 +1,9 @@
+import './globals.css';import Header from '@/components/Header';import Footer from '@/components/Footer';
+export const metadata={title:'Traffik.nz — AI SEO, Core Web Vitals & GBP',description:'Traffik AI Web Optimisation Limited — AI SEO, Core Web Vitals fixes, and Google Business Profile optimisation across New Zealand.'};
+const schema={"@context":"https://schema.org","@type":"LocalBusiness","name":"Traffik AI Web Optimisation Limited","url":"https://www.traffik.nz","email":"hello@traffik.nz","telephone":"+64 21 296 8586","priceRange":"$159-$3540","address":{"@type":"PostalAddress","streetAddress":"6 Nancy Avenue, Mairehau","addressLocality":"Christchurch","postalCode":"8013","addressRegion":"Canterbury","addressCountry":"NZ"},"areaServed":[{"@type":"AdministrativeArea","name":"Christchurch"},{"@type":"AdministrativeArea","name":"Canterbury"},{"@type":"Country","name":"New Zealand"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:00","closes":"18:00"}],"makesOffer":{"@type":"OfferCatalog","name":"Services","itemListElement":[{"@type":"Offer","name":"AI Website Audit","price":"159","priceCurrency":"NZD","url":"https://www.traffik.nz/audit"},{"@type":"Offer","name":"GBP Optimisation","price":"350","priceCurrency":"NZD","url":"https://www.traffik.nz/gbp"}]}};
+export default function RootLayout({children}:{children:React.ReactNode}){
+  return (<html lang="en"><body>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/>
+    <Header/>{children}<Footer/>
+  </body></html>);
+}

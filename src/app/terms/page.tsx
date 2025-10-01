@@ -1,0 +1,1 @@
+export default function Page(){return(<main className="container py-14 prose prose-invert"><h1>Terms of Service</h1><p>Engagements begin once an invoice or checkout is completed. IP transfers on full payment. NZ law governs.</p></main>);}

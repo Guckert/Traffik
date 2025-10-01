@@ -1,0 +1,1 @@
+export default function Page(){return(<main className="container py-14 prose prose-invert"><h1>Refund Policy</h1><p>Audits and one‑off optimisation deliverables are non‑refundable once work has commenced. If we cannot deliver as scoped, we will refund the undelivered portion. NZ consumer guarantees apply.</p></main>);}

@@ -1,0 +1,1 @@
+export default function Page(){return(<main className="container py-20 text-center"><h1 className="text-4xl font-extrabold text-brand-accent">Thank you!</h1><p className="mt-2 text-white/80">Your order is complete. We’ll email onboarding details shortly.</p></main>);}
