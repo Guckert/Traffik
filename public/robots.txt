@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://traffik-sigma.vercel.app/sitemap.xml
+Sitemap: https://traffik.nz/sitemap.xml
