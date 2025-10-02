@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Header from "@/components/Header";
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://traffik-sigma.vercel.app'),
@@ -45,9 +46,6 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  verification: {
-    google: 'your-google-verification-code', // Add your Google Search Console verification code
-  },
 };
 
 export default function RootLayout({
@@ -57,90 +55,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-NZ">
-      <head>
-        <link rel="canonical" href="https://traffik-sigma.vercel.app" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "LocalBusiness",
-              "name": "Traffik - AI Web Optimisation Limited",
-              "description": "AI-powered website audits and Google Business Profile optimization for New Zealand businesses",
-              "url": "https://traffik-sigma.vercel.app",
-              "telephone": "+64212658586",
-              "email": "steve@traffik.nz",
-              "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "Christchurch",
-                "addressRegion": "Canterbury",
-                "addressCountry": "NZ"
-              },
-              "geo": {
-                "@type": "GeoCoordinates",
-                "latitude": -43.5321,
-                "longitude": 172.6362
-              },
-              "priceRange": "$159-$3450",
-              "openingHours": "Mo-Fr 09:00-17:00",
-              "sameAs": [],
-              "areaServed": {
-                "@type": "Country",
-                "name": "New Zealand"
-              },
-              "hasOfferCatalog": {
-                "@type": "OfferCatalog",
-                "name": "Web Optimization Services",
-                "itemListElement": [
-                  {
-                    "@type": "Offer",
-                    "itemOffered": {
-                      "@type": "Service",
-                      "name": "AI Website Audit",
-                      "description": "Comprehensive AI-powered website analysis",
-                      "provider": {
-                        "@type": "LocalBusiness",
-                        "name": "Traffik"
-                      }
-                    },
-                    "price": "159",
-                    "priceCurrency": "NZD"
-                  },
-                  {
-                    "@type": "Offer",
-                    "itemOffered": {
-                      "@type": "Service",
-                      "name": "Google Business Profile Optimisation",
-                      "description": "Local SEO and GBP optimization",
-                      "provider": {
-                        "@type": "LocalBusiness",
-                        "name": "Traffik"
-                      }
-                    },
-                    "price": "350",
-                    "priceCurrency": "NZD"
-                  },
-                  {
-                    "@type": "Offer",
-                    "itemOffered": {
-                      "@type": "Service",
-                      "name": "AI Visibility Pack",
-                      "description": "Complete optimization with ongoing monitoring",
-                      "provider": {
-                        "@type": "LocalBusiness",
-                        "name": "Traffik"
-                      }
-                    },
-                    "price": "3450",
-                    "priceCurrency": "NZD"
-                  }
-                ]
-              }
-            })
-          }}
-        />
-      </head>
-      <body>{children}</body>
+      <body>
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }
