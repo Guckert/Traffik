@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://traffik-sigma.vercel.app'),
@@ -55,9 +56,69 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-NZ">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "LocalBusiness",
+              "name": "Traffik - AI Web Optimisation Limited",
+              "description": "AI-powered website audits and Google Business Profile optimization for New Zealand businesses",
+              "url": "https://traffik-sigma.vercel.app",
+              "telephone": "+64212968586",
+              "email": "steve@traffik.nz",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Christchurch",
+                "addressRegion": "Canterbury",
+                "addressCountry": "NZ"
+              },
+              "priceRange": "$159-$3450",
+              "hasOfferCatalog": {
+                "@type": "OfferCatalog",
+                "name": "Web Optimization Services",
+                "itemListElement": [
+                  {
+                    "@type": "Offer",
+                    "itemOffered": {
+                      "@type": "Service",
+                      "name": "AI Website Audit",
+                      "description": "Comprehensive AI-powered website analysis"
+                    },
+                    "price": "159",
+                    "priceCurrency": "NZD"
+                  },
+                  {
+                    "@type": "Offer",
+                    "itemOffered": {
+                      "@type": "Service",
+                      "name": "Google Business Profile Optimisation",
+                      "description": "Local SEO and GBP optimization"
+                    },
+                    "price": "350",
+                    "priceCurrency": "NZD"
+                  },
+                  {
+                    "@type": "Offer",
+                    "itemOffered": {
+                      "@type": "Service",
+                      "name": "AI Visibility Pack",
+                      "description": "Complete optimization with ongoing monitoring"
+                    },
+                    "price": "3450",
+                    "priceCurrency": "NZD"
+                  }
+                ]
+              }
+            })
+          }}
+        />
+      </head>
       <body>
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );
