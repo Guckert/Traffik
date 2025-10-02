@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { Inter } from 'next/font/google';
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
+const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://traffik-sigma.vercel.app'),
@@ -23,7 +26,7 @@ export const metadata: Metadata = {
     description: "AI-powered website audits and local SEO optimization for NZ businesses. Starting at $159.",
     images: [
       {
-        url: "/images/hero.jpg",
+        url: "/images/home-hero.jpg",
         width: 1200,
         height: 630,
         alt: "Traffik AI Web Optimisation"
@@ -34,7 +37,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Traffik - AI Web Optimisation NZ",
     description: "AI website audits & GBP optimization starting at $159",
-    images: ["/images/hero.jpg"]
+    images: ["/images/home-hero.jpg"]
   },
   robots: {
     index: true,
@@ -115,7 +118,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>
+      <body className={inter.className}>
         <Header />
         {children}
         <Footer />
