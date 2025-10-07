@@ -14,10 +14,9 @@ export default function Page() {
         ]}
       />
 
-      {/* What you get */}
+      {/* What’s included */}
       <section className="container py-12">
         <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">What’s included</h2>
-
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">AI-Optimised Website (Built & Hosted)</h3>
@@ -27,7 +26,6 @@ export default function Page() {
               <li>• Conversion paths for calls, quotes & bookings</li>
             </ul>
           </div>
-
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">Local SEO Automation</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -36,7 +34,6 @@ export default function Page() {
               <li>• Regular content refreshes based on demand</li>
             </ul>
           </div>
-
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">Google Business Profile Growth</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -45,7 +42,6 @@ export default function Page() {
               <li>• Monthly report: calls, map views & directions</li>
             </ul>
           </div>
-
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">Lead Tracking & Reporting</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -83,7 +79,8 @@ export default function Page() {
 
         <div className="mt-8 rounded-2xl border border-white/10 p-6 bg-gradient-to-br from-white/5 to-white/0">
           <p className="text-white">
-            <span className="font-semibold">Pricing:</span> <span className="text-brand-accent font-semibold">$3,450/month</span> for 12 months (all-inclusive: build, hosting, SEO, AI & management).
+            <span className="font-semibold">Pricing:</span>{' '}
+            <span className="text-brand-accent font-semibold">$3,450/month</span> for 12 months (all-inclusive: build, hosting, SEO, AI & management).
           </p>
           <p className="mt-2 text-white/85">
             <span className="font-semibold">After 12 months →</span> $300/month Maintenance Plan (hosting, monitoring & ongoing AI tune-ups).
