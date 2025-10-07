@@ -1,33 +1,52 @@
 // src/app/api/checkout/route.ts
-export const runtime = 'nodejs';          // ensure Node runtime (not Edge)
-export const dynamic = 'force-dynamic';   // avoid caching for redirects
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-// Initialize Stripe WITHOUT apiVersion so it uses your account default
+// Use account default API version (cleanest for type compat)
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-// Stripe Price IDs from env
-const PRICE_AUDIT = process.env.PRICE_AUDIT!;
-const PRICE_GBP   = process.env.PRICE_GBP!;
+// ENV
+const RAW_PRICE_AUDIT = process.env.PRICE_AUDIT!;
+const RAW_PRICE_GBP   = process.env.PRICE_GBP!;
 
-// Build a base URL for success/cancel redirects
+/** Resolve an env value that might be a real price ID or a lookup_key */
+async function resolvePriceId(raw: string) {
+  // If it already looks like a real Stripe price id, just use it.
+  if (raw.startsWith('price_') && !raw.includes(' ')) return raw;
+
+  // Otherwise, treat it as a lookup_key and resolve to a price id
+  const list = await stripe.prices.list({
+    active: true,
+    // @ts-ignore - lookup_keys is supported at runtime; types vary by SDK version
+    lookup_keys: [raw],
+    limit: 1,
+    expand: ['data.product'],
+  });
+
+  if (!list.data.length) {
+    throw new Error(`No active Stripe price found for lookup_key: ${raw}`);
+  }
+  return list.data[0].id;
+}
+
 function baseUrl(req: NextRequest) {
   const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '');
   const origin = req.headers.get('origin') || '';
   return envUrl || origin || 'http://localhost:3000';
 }
 
-function priceFor(product: 'audit' | 'gbp') {
-  if (product === 'audit') return PRICE_AUDIT;
-  if (product === 'gbp')   return PRICE_GBP;
-  return '';
+function rawFor(product: 'audit' | 'gbp') {
+  return product === 'audit' ? RAW_PRICE_AUDIT : RAW_PRICE_GBP;
 }
 
 async function createSession(product: 'audit' | 'gbp', req: NextRequest) {
-  const price = priceFor(product);
-  if (!price) throw new Error(`Missing Stripe price for ${product}`);
+  const raw = rawFor(product);
+  if (!raw) throw new Error(`Missing env for ${product} price`);
+
+  const priceId = await resolvePriceId(raw);
 
   const base = baseUrl(req);
   const success_url = `${base}/thank-you?product=${product}`;
@@ -35,7 +54,7 @@ async function createSession(product: 'audit' | 'gbp', req: NextRequest) {
 
   return stripe.checkout.sessions.create({
     mode: 'payment',
-    line_items: [{ price, quantity: 1 }],
+    line_items: [{ price: priceId, quantity: 1 }],
     success_url,
     cancel_url,
     billing_address_collection: 'auto',
