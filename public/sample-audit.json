@@ -1,4 +1,4 @@
 {
-  "html_report": "<!doctype html> ... your LONG string with \\n and \\\" escapes ...",
+  "html_report": "<!doctype html>\n<html>\n  <body style=\"margin:0;background:#07090b;\"> ... </html>",
   "report_filename": "Traffik_Website_Audit_AUD-20251007073132-O1Y.html"
 }
