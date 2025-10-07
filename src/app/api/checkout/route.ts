@@ -1,3 +1,6 @@
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -9,7 +12,6 @@ const PRICE_AUDIT = process.env.PRICE_AUDIT!;
 const PRICE_GBP = process.env.PRICE_GBP!;
 
 function baseUrl(req: NextRequest) {
-  // Prefer explicit env in prod; otherwise fall back to request origin.
   const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '');
   const origin = req.headers.get('origin') || '';
   return envUrl || origin || 'http://localhost:3000';
