@@ -29,7 +29,7 @@ export default function Page() {
       if (!html) {
         const res = await fetch('/sample-audit.json', { cache: 'no-store' });
         if (!res.ok) throw new Error(`Fetch ${res.status}`);
-        const data = await res.json();
+        const data: { html_report?: string; html?: string; report_filename?: string } = await res.json();
         const raw: string = data.html_report ?? data.html ?? '';
 
         // Remove the anchor that shows whiteheadplumbing.co.nz then the <br/>
@@ -37,8 +37,7 @@ export default function Page() {
           /<a[^>]*href="https?:\/\/whiteheadplumbing\.co\.nz\/?"[^>]*>[\s\S]*?<\/a><br\/?>/i,
           ''
         );
-
-        // (Optional) also remove any bare-text mention of that domain just in case
+        // Also remove any bare-text mention of that domain just in case
         cleaned = cleaned.replace(/https?:\/\/whiteheadplumbing\.co\.nz\/?/gi, '');
 
         setHtml(cleaned);
@@ -78,7 +77,7 @@ export default function Page() {
         title="AI Website Audit — $159"
         subtitle="30-point technical SEO, speed and Google readiness review with prioritised fixes."
         ctas={[
-          { label: 'Buy Audit — $159', href: '/api/checkout?p=audit'},
+          { label: 'Buy Audit — $159', href: '/api/checkout?p=audit' },
           { label: 'Call 021 296 8586', href: 'tel:+64212968586' },
           { label: 'View Sample Audit', href: '#sample-audit' }, // opens modal via hash listener
         ]}
@@ -179,10 +178,7 @@ export default function Page() {
 
         <div className="mt-6 flex flex-wrap gap-3">
           <a
-            href="/api/checkout?p=audit" className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10">
-  Buy Audit — $159
-</a>
-"
+            href="/api/checkout?p=audit"
             className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10"
           >
             Buy Audit — $159
