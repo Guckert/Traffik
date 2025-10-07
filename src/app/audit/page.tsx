@@ -3,35 +3,83 @@
 import { useEffect, useState } from 'react';
 import HeroLeft from '@/components/HeroLeft';
 
-/** Popup component (loads /public/sample-audit.html and shows it in a modal) */
+type AuditJson = {
+  html_report?: string;
+  report_filename?: string;
+  [k: string]: any;
+};
+
+function isLikelyHtml(s: string) {
+  return /<!doctype html|<html/i.test(s);
+}
+
+function decodeEscaped(s: string) {
+  // Handles common escapes if you ever load a doubly-escaped string
+  return s
+    .replace(/\\u003c/gi, '<')
+    .replace(/\\u003e/gi, '>')
+    .replace(/\\u0026/gi, '&')
+    .replace(/\\"/g, '"')
+    .replace(/\\n/g, '\n')
+    .replace(/\\t/g, '\t');
+}
+
+/** Popup that loads a JSON file containing { html_report, report_filename } */
 function AuditPopup({
-  url,
-  buttonLabel = 'View sample audit (popup)',
+  url = '/sample-audit.json',
+  buttonLabel = 'View sample audit',
 }: {
-  url: string;
+  url?: string;
   buttonLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [html, setHtml] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string>('sample-audit.html');
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   async function openModal() {
     setOpen(true);
-    if (!html && !loading) {
-      setLoading(true);
-      setErr(null);
+    if (html || loading) return;
+
+    setLoading(true);
+    setErr(null);
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Fetch ${res.status}`);
+
+      // Try JSON first
+      let text = await res.text();
+      let parsed: AuditJson | null = null;
       try {
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) throw new Error('Failed to fetch audit');
-        const txt = await res.text();
-        setHtml(txt);
-      } catch (e: any) {
-        setErr(e?.message || 'Could not load the audit');
-      } finally {
-        setLoading(false);
+        parsed = JSON.parse(text);
+      } catch {
+        parsed = null;
       }
+
+      let raw = parsed?.html_report ?? text;
+
+      // If we somehow got an escaped string (rare), unescape it
+      if (!isLikelyHtml(raw)) raw = decodeEscaped(raw);
+      if (!isLikelyHtml(raw)) throw new Error('Could not find valid HTML in payload.');
+
+      setHtml(raw);
+      if (parsed?.report_filename) setFileName(parsed.report_filename);
+    } catch (e: any) {
+      setErr(e?.message || 'Could not load the audit');
+    } finally {
+      setLoading(false);
     }
+  }
+
+  function downloadDecodedHtml() {
+    if (!html) return;
+    const blob = new Blob([html], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName || 'sample-audit.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
   }
 
   useEffect(() => {
@@ -52,10 +100,7 @@ function AuditPopup({
       </button>
 
       {open && (
-        <div
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
-          onClick={() => setOpen(false)}
-        >
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" onClick={() => setOpen(false)}>
           <div
             className="absolute left-1/2 top-1/2 w-[95vw] max-w-5xl -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-neutral-950 p-4 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
@@ -66,13 +111,12 @@ function AuditPopup({
             <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
               <h3 className="text-white font-semibold">Sample Audit</h3>
               <div className="flex gap-2">
-                <a
-                  href={url}
-                  download
+                <button
+                  onClick={downloadDecodedHtml}
                   className="rounded-full border border-white/20 px-3 py-1.5 text-sm text-white/85 hover:bg-white/10"
                 >
-                  Download
-                </a>
+                  Download HTML
+                </button>
                 <button
                   onClick={() => setOpen(false)}
                   className="rounded-full border border-white/20 px-3 py-1.5 text-sm text-white/85 hover:bg-white/10"
@@ -87,8 +131,7 @@ function AuditPopup({
               {err && <p className="p-4 text-red-400">{err}</p>}
               {html && (
                 <iframe
-                  // sandboxed for safety (no scripts run)
-                  sandbox=""
+                  sandbox="" /* scripts blocked for safety */
                   srcDoc={html}
                   className="h-full w-full rounded-lg bg-white"
                   title="Audit HTML Preview"
@@ -111,7 +154,6 @@ export default function Page() {
         title="AI Website Audit — $159"
         subtitle="30-point technical SEO, speed and Google readiness review with prioritised fixes."
         ctas={[
-          // TODO: replace with your Stripe checkout when ready
           { label: 'Buy Audit — $159', href: 'mailto:hello@traffik.nz?subject=Buy%20Website%20Audit%20($159)' },
           { label: 'Call 021 296 8586', href: 'tel:+64212968586' },
         ]}
@@ -166,7 +208,7 @@ export default function Page() {
           <li>• Optional 15-minute call to clarify next steps</li>
         </ul>
 
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-6 flex flex-wrap items-center gap-3">
           <a
             href="mailto:hello@traffik.nz?subject=Buy%20Website%20Audit%20($159)"
             className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10"
@@ -180,9 +222,9 @@ export default function Page() {
             Call 021 296 8586
           </a>
 
-          {/* Popup trigger */}
+          {/* JSON-powered popup */}
           <div className="ml-auto">
-            <AuditPopup url="/sample-audit.html" />
+            <AuditPopup url="/sample-audit.json" buttonLabel="View sample audit" />
           </div>
         </div>
       </section>
