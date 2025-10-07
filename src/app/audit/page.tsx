@@ -11,9 +11,10 @@ export default function Page() {
   // Open modal when the #sample-audit hash is used (hero CTA)
   useEffect(() => {
     const openFromHash = () => {
+      if (typeof window === 'undefined') return;
       if (window.location.hash === '#sample-audit') {
         loadSample();
-        // remove the hash so browser doesn’t jump around
+        // remove the hash so the page doesn't jump
         history.replaceState({}, '', window.location.pathname + window.location.search);
       }
     };
@@ -27,13 +28,19 @@ export default function Page() {
     try {
       if (!html) {
         const res = await fetch('/sample-audit.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Fetch ${res.status}`);
         const data = await res.json();
         const raw: string = data.html_report ?? data.html ?? '';
-        // remove the anchor line that shows the whiteheadplumbing.co.nz URL (keep the date/Audit ID)
-        const cleaned = raw.replace(
+
+        // Remove the anchor that shows whiteheadplumbing.co.nz then the <br/>
+        let cleaned = raw.replace(
           /<a[^>]*href="https?:\/\/whiteheadplumbing\.co\.nz\/?"[^>]*>[\s\S]*?<\/a><br\/?>/i,
           ''
         );
+
+        // (Optional) also remove any bare-text mention of that domain just in case
+        cleaned = cleaned.replace(/https?:\/\/whiteheadplumbing\.co\.nz\/?/gi, '');
+
         setHtml(cleaned);
         setFileName(data.report_filename || 'Sample_Audit.html');
       }
@@ -62,7 +69,7 @@ export default function Page() {
 
   return (
     <main>
-      {/* Invisible anchor so the hero CTA has a valid target */}
+      {/* Invisible anchor so the hero CTA can trigger the modal via hash */}
       <div id="sample-audit" className="hidden" />
 
       <HeroLeft
@@ -73,57 +80,100 @@ export default function Page() {
         ctas={[
           { label: 'Buy Audit — $159', href: 'mailto:hello@traffik.nz?subject=Buy%20Website%20Audit%20($159)' },
           { label: 'Call 021 296 8586', href: 'tel:+64212968586' },
-          // New CTA beside the others – opens the modal via hash listener above
-          { label: 'View Sample Audit', href: '#sample-audit' },
+          { label: 'View Sample Audit', href: '#sample-audit' }, // opens modal via hash listener
         ]}
       />
 
-      {/* What you get */}
+      {/* What’s included */}
       <section className="container py-12">
         <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">What’s included</h2>
+
         <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {/* Performance (Lighthouse + CWV) */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
-            <h3 className="text-lg font-semibold text-white">Technical & Speed</h3>
+            <h3 className="text-lg font-semibold text-white">Performance (mobile-first)</h3>
             <ul className="mt-3 space-y-2 text-white/85">
-              <li>• Core Web Vitals & page speed (mobile first)</li>
-              <li>• Crawlability, sitemaps, robots, indexing</li>
-              <li>• Broken links, images, redirects, duplicates</li>
+              <li>• Lighthouse Performance score (mobile)</li>
+              <li>• Core Web Vitals: LCP, CLS, TBT, FCP</li>
+              <li>• Bottlenecks: heavy JS/CSS, image sizing, caching</li>
             </ul>
           </div>
+
+          {/* SEO (Lighthouse SEO) */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
-            <h3 className="text-lg font-semibold text-white">SEO & Content</h3>
+            <h3 className="text-lg font-semibold text-white">SEO signals</h3>
             <ul className="mt-3 space-y-2 text-white/85">
-              <li>• Titles, metas, headings, internal linking</li>
-              <li>• Schema/structured data & AI-readiness</li>
-              <li>• Service & suburb coverage gaps</li>
+              <li>• Lighthouse SEO score</li>
+              <li>• Titles & meta descriptions, canonicals</li>
+              <li>• Crawlability & indexability (sitemap/robots)</li>
             </ul>
           </div>
+
+          {/* Technical (Best Practices) */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
-            <h3 className="text-lg font-semibold text-white">Google Business Profile</h3>
+            <h3 className="text-lg font-semibold text-white">Technical best practices</h3>
             <ul className="mt-3 space-y-2 text-white/85">
-              <li>• Categories, services, keywords & photos</li>
-              <li>• Review velocity & response strategy</li>
-              <li>• Local pack visibility snapshot</li>
+              <li>• Lighthouse Best-Practices score</li>
+              <li>• Security/HTTPS, deprecated APIs, console errors</li>
+              <li>• Redirects, broken assets and duplicates</li>
             </ul>
           </div>
+
+          {/* Accessibility */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
-            <h3 className="text-lg font-semibold text-white">Conversion & Tracking</h3>
+            <h3 className="text-lg font-semibold text-white">Accessibility</h3>
             <ul className="mt-3 space-y-2 text-white/85">
-              <li>• Calls, quote forms, click-to-call paths</li>
-              <li>• Analytics, goals and basic call tracking</li>
-              <li>• Top 5 quick wins to do first</li>
+              <li>• Lighthouse Accessibility score</li>
+              <li>• Alt text, contrast, headings, focus states</li>
+            </ul>
+          </div>
+
+          {/* AI Search Readiness (schema + AEO) */}
+          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
+            <h3 className="text-lg font-semibold text-white">AI search readiness</h3>
+            <ul className="mt-3 space-y-2 text-white/85">
+              <li>• JSON-LD audit: Organization/WebPage/Breadcrumb</li>
+              <li>• LocalBusiness, FAQ & Service schema coverage</li>
+              <li>• Natural-language metas for AI Overviews/voice</li>
+            </ul>
+          </div>
+
+          {/* Local rankings + GBP */}
+          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
+            <h3 className="text-lg font-semibold text-white">Local rankings & GBP</h3>
+            <ul className="mt-3 space-y-2 text-white/85">
+              <li>• Local Pack / Maps / Organic position by keyword</li>
+              <li>• Competitor count & visibility snapshot</li>
+              <li>• GBP audit: categories, services, photos, reviews, NAP</li>
+            </ul>
+          </div>
+
+          {/* Competitive snapshot */}
+          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
+            <h3 className="text-lg font-semibold text-white">Competitive snapshot</h3>
+            <ul className="mt-3 space-y-2 text-white/85">
+              <li>• Top local competitor & positioning gaps</li>
+              <li>• Differentiators you can claim quickly</li>
+            </ul>
+          </div>
+
+          {/* Action plan */}
+          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
+            <h3 className="text-lg font-semibold text-white">Prioritised action plan</h3>
+            <ul className="mt-3 space-y-2 text-white/85">
+              <li>• Top 5 quick wins with estimated score gains</li>
+              <li>• Sequenced fixes for devs (ticket-ready)</li>
             </ul>
           </div>
         </div>
       </section>
 
-      {/* Delivery */}
+      {/* How it’s delivered */}
       <section className="container py-12">
         <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">How it’s delivered</h2>
         <ul className="mt-4 grid gap-2 text-white/85 md:grid-cols-2">
           <li>• Turnaround: 48 hours (business days)</li>
-          <li>• PDF summary + action plan (prioritised)</li>
-          <li>• Loom walkthrough (10–15 minutes)</li>
+          <li>• HTML preview + PDF summary (with prioritised actions)</li>
           <li>• Optional 15-minute call to clarify next steps</li>
         </ul>
 
@@ -140,6 +190,12 @@ export default function Page() {
           >
             Call 021 296 8586
           </a>
+          <button
+            onClick={loadSample}
+            className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10"
+          >
+            View Sample Audit
+          </button>
         </div>
       </section>
 
