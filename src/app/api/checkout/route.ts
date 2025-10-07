@@ -5,22 +5,21 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-// Use account default API version (cleanest for type compat)
+// Initialize Stripe WITHOUT apiVersion so it uses your account default
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-// ENV
+// ENV (price ids or lookup keys)
 const RAW_PRICE_AUDIT = process.env.PRICE_AUDIT!;
 const RAW_PRICE_GBP   = process.env.PRICE_GBP!;
 
 /** Resolve an env value that might be a real price ID or a lookup_key */
 async function resolvePriceId(raw: string) {
-  // If it already looks like a real Stripe price id, just use it.
   if (raw.startsWith('price_') && !raw.includes(' ')) return raw;
 
-  // Otherwise, treat it as a lookup_key and resolve to a price id
   const list = await stripe.prices.list({
     active: true,
-    // @ts-ignore - lookup_keys is supported at runtime; types vary by SDK version
+    // lookup_keys support at runtime even if types vary
+    // @ts-ignore
     lookup_keys: [raw],
     limit: 1,
     expand: ['data.product'],
