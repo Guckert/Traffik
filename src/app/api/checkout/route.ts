@@ -1,16 +1,18 @@
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+// src/app/api/checkout/route.ts
+export const runtime = 'nodejs';          // ensure Node runtime (not Edge)
+export const dynamic = 'force-dynamic';   // avoid caching for redirects
 
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20',
-});
+// Initialize Stripe WITHOUT apiVersion so it uses your account default
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
+// Stripe Price IDs from env
 const PRICE_AUDIT = process.env.PRICE_AUDIT!;
-const PRICE_GBP = process.env.PRICE_GBP!;
+const PRICE_GBP   = process.env.PRICE_GBP!;
 
+// Build a base URL for success/cancel redirects
 function baseUrl(req: NextRequest) {
   const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '');
   const origin = req.headers.get('origin') || '';
@@ -19,7 +21,7 @@ function baseUrl(req: NextRequest) {
 
 function priceFor(product: 'audit' | 'gbp') {
   if (product === 'audit') return PRICE_AUDIT;
-  if (product === 'gbp') return PRICE_GBP;
+  if (product === 'gbp')   return PRICE_GBP;
   return '';
 }
 
@@ -29,7 +31,7 @@ async function createSession(product: 'audit' | 'gbp', req: NextRequest) {
 
   const base = baseUrl(req);
   const success_url = `${base}/thank-you?product=${product}`;
-  const cancel_url = `${base}/${product}`;
+  const cancel_url  = `${base}/${product}`;
 
   return stripe.checkout.sessions.create({
     mode: 'payment',
