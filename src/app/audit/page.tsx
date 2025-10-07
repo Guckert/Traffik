@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import HeroLeft from '@/components/HeroLeft';
 
-const Page: React.FC = () => {
+export default function AuditPage() {
   const [open, setOpen] = useState(false);
   const [html, setHtml] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string>('Sample_Audit.html');
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const [fileName, setFileName] = useState('Sample_Audit.html');
 
   // Open modal when the #sample-audit hash is used (hero CTA)
   useEffect(() => {
@@ -15,42 +14,29 @@ const Page: React.FC = () => {
       if (typeof window === 'undefined') return;
       if (window.location.hash === '#sample-audit') {
         void loadSample();
-        // remove the hash so the page doesn't jump
         history.replaceState({}, '', window.location.pathname + window.location.search);
       }
     };
     openFromHash();
     window.addEventListener('hashchange', openFromHash);
     return () => window.removeEventListener('hashchange', openFromHash);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Lock body scroll when modal open + close on ESC
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
-    window.addEventListener('keydown', onKey);
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener('keydown', onKey);
-    };
-  }, [open]);
-
+  // Fetch JSON, strip the site URL from the HTML, then show modal
   async function loadSample() {
     try {
       if (!html) {
         const res = await fetch('/sample-audit.json', { cache: 'no-store' });
         if (!res.ok) throw new Error(`Fetch ${res.status}`);
         const data: { html_report?: string; html?: string; report_filename?: string } = await res.json();
-        const raw: string = data.html_report ?? data.html ?? '';
+        const raw = data.html_report ?? data.html ?? '';
 
         // Remove the anchor that shows whiteheadplumbing.co.nz then the <br/>
         let cleaned = raw.replace(
           /<a[^>]*href="https?:\/\/whiteheadplumbing\.co\.nz\/?"[^>]*>[\s\S]*?<\/a><br\/?>/i,
           ''
         );
-        // Also remove any bare-text mention of that domain just in case
         cleaned = cleaned.replace(/https?:\/\/whiteheadplumbing\.co\.nz\/?/gi, '');
 
         setHtml(cleaned);
@@ -79,10 +65,6 @@ const Page: React.FC = () => {
     URL.revokeObjectURL(url);
   }
 
-  function printHtml() {
-    iframeRef.current?.contentWindow?.print?.();
-  }
-
   return (
     <main>
       {/* Invisible anchor so the hero CTA can trigger the modal via hash */}
@@ -96,16 +78,14 @@ const Page: React.FC = () => {
         ctas={[
           { label: 'Buy Audit — $159', href: '/api/checkout?p=audit' },
           { label: 'Call 021 296 8586', href: 'tel:+64212968586' },
-          { label: 'View Sample Audit', href: '#sample-audit' }, // opens modal via hash listener
+          { label: 'View Sample Audit', href: '#sample-audit' },
         ]}
       />
 
       {/* What’s included */}
       <section className="container py-12">
         <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">What’s included</h2>
-
         <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {/* Performance (Lighthouse + CWV) */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">Performance (mobile-first)</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -115,7 +95,6 @@ const Page: React.FC = () => {
             </ul>
           </div>
 
-          {/* SEO (Lighthouse SEO) */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">SEO signals</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -125,7 +104,6 @@ const Page: React.FC = () => {
             </ul>
           </div>
 
-          {/* Technical (Best Practices) */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">Technical best practices</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -135,7 +113,6 @@ const Page: React.FC = () => {
             </ul>
           </div>
 
-          {/* Accessibility */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">Accessibility</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -144,7 +121,6 @@ const Page: React.FC = () => {
             </ul>
           </div>
 
-          {/* AI Search Readiness (schema + AEO) */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">AI search readiness</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -154,7 +130,6 @@ const Page: React.FC = () => {
             </ul>
           </div>
 
-          {/* Local rankings + GBP */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">Local rankings & GBP</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -164,7 +139,6 @@ const Page: React.FC = () => {
             </ul>
           </div>
 
-          {/* Competitive snapshot */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">Competitive snapshot</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -173,7 +147,6 @@ const Page: React.FC = () => {
             </ul>
           </div>
 
-          {/* Action plan */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">Prioritised action plan</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -257,12 +230,6 @@ const Page: React.FC = () => {
                   Download HTML
                 </button>
                 <button
-                  onClick={printHtml}
-                  className="rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
-                >
-                  Print
-                </button>
-                <button
                   onClick={() => setOpen(false)}
                   className="rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
                 >
@@ -273,7 +240,6 @@ const Page: React.FC = () => {
             <div className="h-[72vh] w-full bg-black">
               {html ? (
                 <iframe
-                  ref={iframeRef}
                   title="Sample Audit"
                   className="h-full w-full"
                   srcDoc={html}
@@ -288,6 +254,4 @@ const Page: React.FC = () => {
       )}
     </main>
   );
-};
-
-export default Page;
+}
