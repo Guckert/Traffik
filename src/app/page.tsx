@@ -1,3 +1,34 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'AI Website Optimisation for NZ Trades',
+  description:
+    'Traffik helps NZ tradies get found on Google. $159 website audit, $350 Google Business Profile optimisation, and the AI Visibility System to keep your phone ringing.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    type: 'website',
+    url: 'https://traffik.nz/',
+    siteName: 'Traffik.nz',
+    title: 'AI Website Optimisation for NZ Trades | Traffik.nz',
+    description:
+      'Website audits, Google Business Profile optimisation, and a full AI Visibility System for NZ tradies.',
+    images: [
+      {
+        url: 'https://traffik.nz/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Traffik.nz — AI website optimisation for NZ trades',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AI Website Optimisation for NZ Trades | Traffik.nz',
+    description:
+      'Website audits, GBP optimisation, and an AI Visibility System built to keep the phone ringing.',
+    images: ['https://traffik.nz/og-image.jpg'],
+  },
+};
 import HeroLeft from '@/components/HeroLeft';
 
 export default function Home() {
