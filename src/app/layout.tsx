@@ -2,8 +2,11 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import Link from 'next/link';
 import Script from 'next/script';
+
+// Your components
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://traffik.nz'),
@@ -21,29 +24,15 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  // NOTE: do not add 'use client' here
   return (
     <html lang="en">
       <body className="bg-black text-white">
-        <header className="border-b border-white/10">
-          <nav className="container flex items-center justify-between py-4">
-            <Link href="/" className="font-bold tracking-wide text-brand-accent">TRAFFIK</Link>
-            <ul className="flex items-center gap-5 text-white/85">
-              <li><Link href="/">Home</Link></li>
-              <li><Link href="/audit">Audit</Link></li>
-              <li><Link href="/gbp">GBP</Link></li>
-              <li><Link href="/ai-visibility">AI Visibility System</Link></li>
-              <li><a href="tel:+64212968586">021 296 8586</a></li>
-              <li><a href="mailto:hello@traffik.nz">hello@traffik.nz</a></li>
-            </ul>
-          </nav>
-        </header>
-
+        <Header />
         {children}
+        <Footer />
 
-        <footer className="border-t border-white/10">
-          <div className="container py-6 text-sm text-white/70">© {new Date().getFullYear()} Traffik.nz • Christchurch, NZ</div>
-        </footer>
-
+        {/* JSON-LD: ProfessionalService + Offers */}
         <Script id="schema-profservice" type="application/ld+json" strategy="afterInteractive">
           {JSON.stringify({
             '@context': 'https://schema.org',
@@ -52,7 +41,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             url: 'https://traffik.nz/',
             logo: 'https://traffik.nz/logo.png',
             image: 'https://traffik.nz/og-image.jpg',
-            description: 'AI website optimisation for NZ trades. Website audits, Google Business Profile optimisation, and a full AI Visibility System.',
+            description:
+              'AI website optimisation for NZ trades. Website audits, Google Business Profile optimisation, and a full AI Visibility System.',
             areaServed: { '@type': 'Country', name: 'New Zealand' },
             telephone: '+64 21 296 8586',
             email: 'hello@traffik.nz',
@@ -68,6 +58,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           })}
         </Script>
 
+        {/* JSON-LD: WebSite */}
         <Script id="schema-website" type="application/ld+json" strategy="afterInteractive">
           {JSON.stringify({
             '@context': 'https://schema.org',
