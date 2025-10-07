@@ -12,24 +12,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const RAW_PRICE_AUDIT = process.env.PRICE_AUDIT!;
 const RAW_PRICE_GBP   = process.env.PRICE_GBP!;
 
-/** Resolve an env value that might be a real price ID or a lookup_key */
-async function resolvePriceId(raw: string) {
-  if (raw.startsWith('price_') && !raw.includes(' ')) return raw;
-
-  const list = await stripe.prices.list({
-    active: true,
-    // lookup_keys support at runtime even if types vary
-    // @ts-ignore
-    lookup_keys: [raw],
-    limit: 1,
-    expand: ['data.product'],
-  });
-
-  if (!list.data.length) {
-    throw new Error(`No active Stripe price found for lookup_key: ${raw}`);
-  }
-  return list.data[0].id;
-}
+// Simple in-memory cache (resets on cold start/redeploy)
+const priceCache = new Map<string, string>();
 
 function baseUrl(req: NextRequest) {
   const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '');
@@ -39,6 +23,44 @@ function baseUrl(req: NextRequest) {
 
 function rawFor(product: 'audit' | 'gbp') {
   return product === 'audit' ? RAW_PRICE_AUDIT : RAW_PRICE_GBP;
+}
+
+/** Resolve an env value that might be a real price ID or a lookup_key */
+async function resolvePriceId(raw: string) {
+  // Already cached?
+  if (priceCache.has(raw)) return priceCache.get(raw)!;
+
+  // Already a Price ID?
+  if (raw.startsWith('price_') && !raw.includes(' ')) {
+    priceCache.set(raw, raw);
+    return raw;
+  }
+
+  // Try the typed Search API first
+  try {
+    const search = await stripe.prices.search({
+      query: `lookup_key:'${raw}' AND active:'true'`,
+      limit: 1,
+    });
+    if (search.data.length) {
+      const id = search.data[0].id;
+      priceCache.set(raw, id);
+      return id;
+    }
+  } catch {
+    // fall through to list()
+  }
+
+  // Fallback: list and find by lookup_key (typed)
+  const list = await stripe.prices.list({
+    active: true,
+    limit: 100,
+    expand: ['data.product'],
+  });
+  const match = list.data.find((p) => p.lookup_key === raw);
+  if (!match) throw new Error(`No active Stripe price found for: ${raw}`);
+  priceCache.set(raw, match.id);
+  return match.id;
 }
 
 async function createSession(product: 'audit' | 'gbp', req: NextRequest) {
