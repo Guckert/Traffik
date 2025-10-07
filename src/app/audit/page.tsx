@@ -1,19 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import HeroLeft from '@/components/HeroLeft';
 
-export default function Page() {
+const Page: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [html, setHtml] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>('Sample_Audit.html');
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   // Open modal when the #sample-audit hash is used (hero CTA)
   useEffect(() => {
     const openFromHash = () => {
       if (typeof window === 'undefined') return;
       if (window.location.hash === '#sample-audit') {
-        loadSample();
+        void loadSample();
         // remove the hash so the page doesn't jump
         history.replaceState({}, '', window.location.pathname + window.location.search);
       }
@@ -23,7 +24,19 @@ export default function Page() {
     return () => window.removeEventListener('hashchange', openFromHash);
   }, []);
 
-  // Fetch JSON, strip the site URL from the HTML, then show modal
+  // Lock body scroll when modal open + close on ESC
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
   async function loadSample() {
     try {
       if (!html) {
@@ -64,6 +77,10 @@ export default function Page() {
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
+  }
+
+  function printHtml() {
+    iframeRef.current?.contentWindow?.print?.();
   }
 
   return (
@@ -240,6 +257,12 @@ export default function Page() {
                   Download HTML
                 </button>
                 <button
+                  onClick={printHtml}
+                  className="rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
+                >
+                  Print
+                </button>
+                <button
                   onClick={() => setOpen(false)}
                   className="rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
                 >
@@ -250,6 +273,7 @@ export default function Page() {
             <div className="h-[72vh] w-full bg-black">
               {html ? (
                 <iframe
+                  ref={iframeRef}
                   title="Sample Audit"
                   className="h-full w-full"
                   srcDoc={html}
@@ -264,4 +288,6 @@ export default function Page() {
       )}
     </main>
   );
-}
+};
+
+export default Page;
