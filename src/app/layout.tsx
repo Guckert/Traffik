@@ -1,43 +1,32 @@
-import type { Metadata } from "next";
-import { Inter } from 'next/font/google';
-import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-
-const inter = Inter({ subsets: ['latin'], display: 'swap' });
+import './globals.css';
+import type { Metadata } from 'next';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://traffik-sigma.vercel.app'),
+  metadataBase: new URL('https://traffik.nz'),
   title: {
-    default: "Traffik - AI Web Optimisation | $159 Website Audits NZ",
-    template: "%s | Traffik"
+    default: 'AI Website Optimisation for NZ Trades | Traffik.nz',
+    template: '%s | Traffik.nz',
   },
-  description: "NZ's leading AI website audits ($159) and Google Business Profile optimization. Improve Core Web Vitals, local rankings, and conversions for Christchurch businesses.",
-  keywords: ["website audit", "SEO audit", "Google Business Profile", "GBP optimization", "Core Web Vitals", "Christchurch", "New Zealand", "AI optimization", "local SEO", "website speed"],
-  authors: [{ name: "Traffik", url: "https://traffik-sigma.vercel.app" }],
-  creator: "Traffik",
-  publisher: "Traffik",
+  description:
+    'Traffik helps NZ tradies (plumbers, builders, electricians, roofers) get found on Google. $159 website audit, $350 Google Business Profile optimisation, and the AI Visibility System.',
+  alternates: { canonical: '/' },
   openGraph: {
-    type: "website",
-    locale: "en_NZ",
-    url: "https://traffik-sigma.vercel.app",
-    siteName: "Traffik",
-    title: "Traffik - AI Web Optimisation Limited",
-    description: "AI-powered website audits and local SEO optimization for NZ businesses. Starting at $159.",
+    type: 'website',
+    url: 'https://traffik.nz/',
+    siteName: 'Traffik.nz',
     images: [
       {
-        url: "/images/home-hero.jpg",
+        url: 'https://traffik.nz/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: "Traffik AI Web Optimisation"
-      }
-    ]
+        alt: 'Traffik.nz — AI website optimisation for NZ trades',
+      },
+    ],
   },
   twitter: {
-    card: "summary_large_image",
-    title: "Traffik - AI Web Optimisation NZ",
-    description: "AI website audits & GBP optimization starting at $159",
-    images: ["/images/home-hero.jpg"]
+    card: 'summary_large_image',
+    images: ['https://traffik.nz/og-image.jpg'],
   },
   robots: {
     index: true,
@@ -45,83 +34,92 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet': -1,
+      'max-video-preview': -1,
     },
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-NZ">
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "LocalBusiness",
-              "name": "Traffik - AI Web Optimisation Limited",
-              "description": "AI-powered website audits and Google Business Profile optimization for New Zealand businesses",
-              "url": "https://traffik-sigma.vercel.app",
-              "telephone": "+64212968586",
-              "email": "steve@traffik.nz",
-              "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "Christchurch",
-                "addressRegion": "Canterbury",
-                "addressCountry": "NZ"
-              },
-              "priceRange": "$159-$3450",
-              "hasOfferCatalog": {
-                "@type": "OfferCatalog",
-                "name": "Web Optimization Services",
-                "itemListElement": [
-                  {
-                    "@type": "Offer",
-                    "itemOffered": {
-                      "@type": "Service",
-                      "name": "AI Website Audit",
-                      "description": "Comprehensive AI-powered website analysis"
-                    },
-                    "price": "159",
-                    "priceCurrency": "NZD"
-                  },
-                  {
-                    "@type": "Offer",
-                    "itemOffered": {
-                      "@type": "Service",
-                      "name": "Google Business Profile Optimisation",
-                      "description": "Local SEO and GBP optimization"
-                    },
-                    "price": "350",
-                    "priceCurrency": "NZD"
-                  },
-                  {
-                    "@type": "Offer",
-                    "itemOffered": {
-                      "@type": "Service",
-                      "name": "AI Visibility Pack",
-                      "description": "Complete optimization with ongoing monitoring"
-                    },
-                    "price": "3450",
-                    "priceCurrency": "NZD"
-                  }
-                ]
-              }
-            })
-          }}
-        />
-      </head>
-      <body className={inter.className}>
-        <Header />
+    <html lang="en">
+      <body>
         {children}
-        <Footer />
+
+        {/* Schema.org: ProfessionalService + Offers */}
+        <Script id="schema-profservice" type="application/ld+json" strategy="afterInteractive">
+          {JSON.stringify(
+            {
+              '@context': 'https://schema.org',
+              '@type': 'ProfessionalService',
+              name: 'Traffik.nz',
+              url: 'https://traffik.nz/',
+              logo: 'https://traffik.nz/logo.png',
+              image: 'https://traffik.nz/og-image.jpg',
+              description:
+                'AI website optimisation for NZ trades. Website audits, Google Business Profile optimisation, and a full AI Visibility System.',
+              areaServed: { '@type': 'Country', name: 'New Zealand' },
+              telephone: '+64 21 296 8586',
+              email: 'hello@traffik.nz',
+              sameAs: [
+                'https://www.facebook.com/traffik.nz',
+                'https://www.linkedin.com/company/traffik-nz',
+              ],
+              hasOfferCatalog: {
+                '@type': 'OfferCatalog',
+                name: 'Traffik Services',
+                itemListElement: [
+                  {
+                    '@type': 'Offer',
+                    name: 'AI Website Audit',
+                    priceCurrency: 'NZD',
+                    price: '159',
+                    url: 'https://traffik.nz/audit',
+                  },
+                  {
+                    '@type': 'Offer',
+                    name: 'Google Business Profile Optimisation',
+                    priceCurrency: 'NZD',
+                    price: '350',
+                    url: 'https://traffik.nz/gbp',
+                  },
+                  {
+                    '@type': 'Offer',
+                    name: 'AI Visibility System',
+                    priceCurrency: 'NZD',
+                    price: '3450',
+                    url: 'https://traffik.nz/ai-visibility',
+                  },
+                ],
+              },
+            },
+            null,
+            2
+          )}
+        </Script>
+
+        {/* Schema.org: WebSite */}
+        <Script id="schema-website" type="application/ld+json" strategy="afterInteractive">
+          {JSON.stringify(
+            {
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              url: 'https://traffik.nz/',
+              name: 'Traffik.nz',
+              publisher: {
+                '@type': 'Organization',
+                name: 'Traffik.nz',
+                logo: {
+                  '@type': 'ImageObject',
+                  url: 'https://traffik.nz/logo.png',
+                },
+              },
+            },
+            null,
+            2
+          )}
+        </Script>
       </body>
     </html>
   );
