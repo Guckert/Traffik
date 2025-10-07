@@ -78,7 +78,7 @@ export default function Page() {
         title="AI Website Audit — $159"
         subtitle="30-point technical SEO, speed and Google readiness review with prioritised fixes."
         ctas={[
-          { label: 'Buy Audit — $159', href: 'mailto:hello@traffik.nz?subject=Buy%20Website%20Audit%20($159)' },
+          { label: 'Buy Audit — $159', href: '/api/checkout?p=audit'},
           { label: 'Call 021 296 8586', href: 'tel:+64212968586' },
           { label: 'View Sample Audit', href: '#sample-audit' }, // opens modal via hash listener
         ]}
@@ -179,7 +179,10 @@ export default function Page() {
 
         <div className="mt-6 flex flex-wrap gap-3">
           <a
-            href="mailto:hello@traffik.nz?subject=Buy%20Website%20Audit%20($159)"
+            href="/api/checkout?p=audit" className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10">
+  Buy Audit — $159
+</a>
+"
             className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10"
           >
             Buy Audit — $159
