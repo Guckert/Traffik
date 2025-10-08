@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-// ✅ Use account default API version (avoid type mismatch issues)
+// ✅ Use your account's default API version (avoid type/type-mismatch issues)
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 // Price IDs (or lookup keys) from env
@@ -24,14 +24,13 @@ function rawFor(product: ProductKey) {
   return product === 'audit' ? RAW_PRICE_AUDIT : RAW_PRICE_GBP;
 }
 
-// If you’re using lookup keys, this resolves them to a price id; if you already
-// have price_... ids, they’re returned as-is.
+// Resolve lookup key -> price id (or pass through if already price_...)
 async function resolvePriceId(raw: string) {
   if (raw.startsWith('price_') && !raw.includes(' ')) return raw;
 
   const list = await stripe.prices.list({
     active: true,
-    // @ts-ignore — lookup_keys is supported at runtime even if not in the types
+    // @ts-ignore lookup_keys is supported at runtime
     lookup_keys: [raw],
     limit: 1,
     expand: ['data.product'],
@@ -42,7 +41,7 @@ async function resolvePriceId(raw: string) {
   return list.data[0].id;
 }
 
-// Helper to build a Stripe custom text field without sending empty default_value
+// Build a text custom field without sending empty default_value
 function customTextField(opts: {
   key: string;
   label: string;
@@ -52,44 +51,37 @@ function customTextField(opts: {
   max?: number;
 }) {
   const { key, label, required = true, defaultValue, min = 3, max = 200 } = opts;
-
-  // Base field
   const field: any = {
     key,
     label: { type: 'custom', custom: label },
     type: 'text',
     optional: !required,
     text: {
-      // Only set these constraints; do NOT set default_value yet
       minimum_length: min,
       maximum_length: max,
     },
   };
-
-  // Only attach default_value if truthy & non-empty
   const trimmed = (defaultValue ?? '').trim();
-  if (trimmed.length > 0) {
-    field.text.default_value = trimmed;
-  }
-
+  if (trimmed) field.text.default_value = trimmed; // only include if non-empty
   return field;
 }
 
 async function createSession(product: ProductKey, req: NextRequest) {
   const raw = rawFor(product);
   if (!raw) throw new Error(`Missing env for ${product} price`);
-
   const priceId = await resolvePriceId(raw);
 
   const base = baseUrl(req);
   const success_url = `${base}/thank-you?product=${product}`;
   const cancel_url  = `${base}/${product}`;
 
-  // Optional: allow prefill via query params
+  // Optional prefill via query params
   const url = new URL(req.url);
   const sitePrefill = url.searchParams.get('site'); // e.g. https://example.co.nz
-  const kwPrefill   = url.searchParams.get('kw');   // e.g. plumber, christchurch, hot water
+  const kwPrefill   = url.searchParams.get('kw');   // e.g. plumber christchurch,hot water
+  const locPrefill  = url.searchParams.get('loc');  // e.g. Christchurch, Riccarton, Selwyn
 
+  // ⚠️ Max 3 custom fields allowed by Stripe
   const custom_fields = [
     customTextField({
       key: 'website_url',
@@ -107,10 +99,17 @@ async function createSession(product: ProductKey, req: NextRequest) {
       min: 3,
       max: 250,
     }),
+    customTextField({
+      key: 'location',
+      label: 'Location (suburb/city/region)',
+      required: true,
+      defaultValue: locPrefill,
+      min: 2,
+      max: 120,
+    }),
   ];
 
-  // Promo codes only for Audit
-  const allowPromo = product === 'audit';
+  const allowPromo = product === 'audit'; // promo codes for Audit only
 
   return stripe.checkout.sessions.create({
     mode: 'payment',
@@ -118,16 +117,12 @@ async function createSession(product: ProductKey, req: NextRequest) {
     success_url,
     cancel_url,
 
-    // Collect email automatically; Stripe also captures cardholder name.
+    // Stripe collects email automatically; cardholder name is on the payment element.
     customer_creation: 'always',
 
-    // 💡 Only enable this for Audit
     allow_promotion_codes: allowPromo,
-
-    // Our two required custom fields
     custom_fields,
 
-    // Keep a hint of which product was purchased
     metadata: { product },
   });
 }
