@@ -10,37 +10,18 @@ export default function AuditPage() {
 
   // Open modal when the #sample-audit hash is used (hero CTA)
   useEffect(() => {
-    const openFromHash = () => {
+    const onHash = () => {
       if (typeof window === 'undefined') return;
       if (window.location.hash === '#sample-audit') {
         void loadSample();
-        // remove the hash so the page doesn't jump
         history.replaceState({}, '', window.location.pathname + window.location.search);
       }
     };
-    openFromHash();
-    window.addEventListener('hashchange', openFromHash);
-    return () => window.removeEventListener('hashchange', openFromHash);
+    onHash();
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Close on Escape + lock body scroll when modal open
-  useEffect(() => {
-    if (open) {
-      document.body.classList.add('overflow-hidden');
-    } else {
-      document.body.classList.remove('overflow-hidden');
-    }
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      document.body.classList.remove('overflow-hidden');
-    };
-  }, [open]);
 
   // Fetch JSON, strip the site URL from the HTML, then show modal
   async function loadSample() {
@@ -48,7 +29,9 @@ export default function AuditPage() {
       if (!html) {
         const res = await fetch('/sample-audit.json', { cache: 'no-store' });
         if (!res.ok) throw new Error(`Fetch ${res.status}`);
-        const data: { html_report?: string; html?: string; report_filename?: string } = await res.json();
+        const data: { html_report?: string; html?: string; report_filename?: string } =
+          await res.json();
+
         const raw = data.html_report ?? data.html ?? '';
 
         // Remove the anchor that shows whiteheadplumbing.co.nz then the <br/>
@@ -56,6 +39,7 @@ export default function AuditPage() {
           /<a[^>]*href="https?:\/\/whiteheadplumbing\.co\.nz\/?"[^>]*>[\s\S]*?<\/a><br\/?>/i,
           ''
         );
+        // Also remove any bare-text mention of that domain just in case
         cleaned = cleaned.replace(/https?:\/\/whiteheadplumbing\.co\.nz\/?/gi, '');
 
         setHtml(cleaned);
@@ -116,7 +100,7 @@ export default function AuditPage() {
             </ul>
           </div>
 
-          {/* SEO (Lighthouse SEO) */}
+          {/* SEO */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">SEO signals</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -126,7 +110,7 @@ export default function AuditPage() {
             </ul>
           </div>
 
-          {/* Technical (Best Practices) */}
+          {/* Technical */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">Technical best practices</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -145,7 +129,7 @@ export default function AuditPage() {
             </ul>
           </div>
 
-          {/* AI Search Readiness (schema + AEO) */}
+          {/* AI Search Readiness */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">AI search readiness</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -155,7 +139,7 @@ export default function AuditPage() {
             </ul>
           </div>
 
-          {/* Local rankings + GBP */}
+          {/* Local & GBP */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">Local rankings & GBP</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -165,7 +149,7 @@ export default function AuditPage() {
             </ul>
           </div>
 
-          {/* Competitive snapshot */}
+          {/* Competitive */}
           <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
             <h3 className="text-lg font-semibold text-white">Competitive snapshot</h3>
             <ul className="mt-3 space-y-2 text-white/85">
@@ -208,7 +192,6 @@ export default function AuditPage() {
             Call 021 296 8586
           </a>
           <button
-            type="button"
             onClick={loadSample}
             className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10"
           >
@@ -217,51 +200,25 @@ export default function AuditPage() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="container py-12">
-        <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">FAQ</h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
-            <h3 className="font-semibold text-white">Who is it for?</h3>
-            <p className="mt-2 text-white/85">NZ tradies: plumbers, builders, sparkies, roofers, painters, landscapers and more.</p>
-          </div>
-          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
-            <h3 className="font-semibold text-white">What do you need from me?</h3>
-            <p className="mt-2 text-white/85">Your website URL and service area. That’s it.</p>
-          </div>
-          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
-            <h3 className="font-semibold text-white">Will you do the fixes?</h3>
-            <p className="mt-2 text-white/85">We can quote fixes or roll them into our AI Visibility System.</p>
-          </div>
-          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
-            <h3 className="font-semibold text-white">Money-back?</h3>
-            <p className="mt-2 text-white/85">If we can’t find at least 5 meaningful improvements, we’ll refund you.</p>
-          </div>
-        </div>
-      </section>
-
       {/* Modal */}
       {open && (
-        <div role="dialog" aria-modal="true" aria-label="Sample Audit" className="fixed inset-0 z-50">
-          <button
-            type="button"
-            aria-label="Close modal"
+        <div role="dialog" aria-modal="true" className="fixed inset-0 z-50">
+          <div
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={() => setOpen(false)}
+            aria-hidden="true"
           />
           <div className="relative z-10 mx-auto mt-10 w-full max-w-5xl overflow-hidden rounded-2xl border border-white/10 bg-[#0b0f14] shadow-xl">
             <div className="flex items-center justify-between border-b border-white/10 p-4">
               <h3 className="text-lg font-semibold text-white">Sample Audit</h3>
               <div className="flex gap-2">
                 <button
-                  type="button"
                   onClick={downloadHtml}
                   className="rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
                 >
                   Download HTML
                 </button>
                 <button
-                  type="button"
                   onClick={() => setOpen(false)}
                   className="rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
                 >
