@@ -1,72 +1,27 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import HeroLeft from '@/components/HeroLeft';
+import AuditPopup from '@/components/AuditPopup';
 
 export default function AuditPage() {
-  const [open, setOpen] = useState(false);
-  const [html, setHtml] = useState<string | null>(null);
-  const [fileName, setFileName] = useState('Sample_Audit.html');
+  const auditPopupRef = useRef<HTMLDivElement>(null);
 
   // Open modal when the #sample-audit hash is used (hero CTA)
   useEffect(() => {
     const onHash = () => {
       if (typeof window === 'undefined') return;
       if (window.location.hash === '#sample-audit') {
-        void loadSample();
+        // Trigger the AuditPopup button click
+        const button = auditPopupRef.current?.querySelector('button');
+        button?.click();
         history.replaceState({}, '', window.location.pathname + window.location.search);
       }
     };
     onHash();
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Fetch JSON, strip the site URL from the HTML, then show modal
-  async function loadSample() {
-    try {
-      if (!html) {
-        const res = await fetch('/sample-audit.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error(`Fetch ${res.status}`);
-        const data: { html_report?: string; html?: string; report_filename?: string } =
-          await res.json();
-
-        const raw = data.html_report ?? data.html ?? '';
-
-        // Remove the anchor that shows whiteheadplumbing.co.nz then the <br/>
-        let cleaned = raw.replace(
-          /<a[^>]*href="https?:\/\/whiteheadplumbing\.co\.nz\/?"[^>]*>[\s\S]*?<\/a><br\/?>/i,
-          ''
-        );
-        // Also remove any bare-text mention of that domain just in case
-        cleaned = cleaned.replace(/https?:\/\/whiteheadplumbing\.co\.nz\/?/gi, '');
-
-        setHtml(cleaned);
-        setFileName(data.report_filename || 'Sample_Audit.html');
-      }
-      setOpen(true);
-    } catch (e) {
-      console.error(e);
-      setHtml(
-        '<!doctype html><html><body style="font-family:system-ui;padding:16px">Could not load the sample right now.</body></html>'
-      );
-      setOpen(true);
-    }
-  }
-
-  function downloadHtml() {
-    if (!html) return;
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName || 'Sample_Audit.html';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
 
   return (
     <main>
@@ -85,9 +40,9 @@ export default function AuditPage() {
         ]}
       />
 
-      {/* What’s included */}
+      {/* What's included */}
       <section className="container py-12">
-        <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">What’s included</h2>
+        <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">What's included</h2>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {/* Performance (Lighthouse + CWV) */}
@@ -169,9 +124,9 @@ export default function AuditPage() {
         </div>
       </section>
 
-      {/* How it’s delivered */}
+      {/* How it's delivered */}
       <section className="container py-12">
-        <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">How it’s delivered</h2>
+        <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">How it's delivered</h2>
         <ul className="mt-4 grid gap-2 text-white/85 md:grid-cols-2">
           <li>• Turnaround: 48 hours (business days)</li>
           <li>• HTML preview + PDF summary (with prioritised actions)</li>
@@ -191,56 +146,14 @@ export default function AuditPage() {
           >
             Call 021 296 8586
           </a>
-          <button
-            onClick={loadSample}
-            className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10"
-          >
-            View Sample Audit
-          </button>
-        </div>
-      </section>
-
-      {/* Modal */}
-      {open && (
-        <div role="dialog" aria-modal="true" className="fixed inset-0 z-50">
-          <div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-            onClick={() => setOpen(false)}
-            aria-hidden="true"
-          />
-          <div className="relative z-10 mx-auto mt-10 w-full max-w-5xl overflow-hidden rounded-2xl border border-white/10 bg-[#0b0f14] shadow-xl">
-            <div className="flex items-center justify-between border-b border-white/10 p-4">
-              <h3 className="text-lg font-semibold text-white">Sample Audit</h3>
-              <div className="flex gap-2">
-                <button
-                  onClick={downloadHtml}
-                  className="rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
-                >
-                  Download HTML
-                </button>
-                <button
-                  onClick={() => setOpen(false)}
-                  className="rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-            <div className="h-[72vh] w-full bg-black">
-              {html ? (
-                <iframe
-                  title="Sample Audit"
-                  className="h-full w-full"
-                  srcDoc={html}
-                  sandbox="allow-same-origin allow-popups allow-top-navigation-by-user-activation"
-                />
-              ) : (
-                <div className="p-6 text-white/80">Loading…</div>
-              )}
-            </div>
+          <div ref={auditPopupRef}>
+            <AuditPopup 
+              url="/sample-audit.json" 
+              buttonLabel="View Sample Audit" 
+            />
           </div>
         </div>
-      )}
+      </section>
     </main>
   );
 }
