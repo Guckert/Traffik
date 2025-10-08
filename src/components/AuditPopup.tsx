@@ -100,7 +100,7 @@ export default function AuditPopup({
               </div>
               <div className="flex gap-2">
                 {/* Zoom controls - mobile only */}
-                <div className="flex gap-1 md:hidden">
+               <div className="flex gap-1" style={{border: '2px solid red'}}>
                   <button
                     onClick={zoomOut}
                     className="rounded-full border border-white/20 px-3 py-1.5 text-sm text-white/85 hover:bg-white/10"
