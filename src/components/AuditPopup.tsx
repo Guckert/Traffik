@@ -27,7 +27,7 @@ export default function AuditPopup({
         if (!txt.includes('viewport')) {
           txt = txt.replace(
             '<head>',
-            '<head><meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=3.0, user-scalable=yes">'
+            '<head><meta name="viewport" content="width=680, initial-scale=0.4, minimum-scale=0.2, maximum-scale=3.0, user-scalable=yes">'
           );
         }
         
