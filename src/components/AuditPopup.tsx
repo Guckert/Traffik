@@ -95,8 +95,7 @@ export default function AuditPopup({
           >
             <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
               <div className="flex items-center gap-3">
-                <h3 className="text-white font-semibold text-sm md:text-base">Sample Audit</h3>
-                <span className="text-white/50 text-xs md:hidden">{zoom}%</span>
+              <h3 className="text-white font-semibold text-sm md:text-base">Sample Audit {zoom}%</h3>
               </div>
               <div className="flex gap-2">
                 {/* Zoom controls - mobile only */}
