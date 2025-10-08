@@ -1,4 +1,15 @@
 // src/app/api/checkout/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
+
+// ✅ Use your account’s default API version (no apiVersion typed)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+
+const PRICE_AUDIT = process.env.PRICE_AUDIT!;
+const PRICE_GBP   = process.env.PRICE_GBP!;
+
+// ...keep the rest of your file exactly the same...
+
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
