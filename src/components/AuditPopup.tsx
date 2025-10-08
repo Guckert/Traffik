@@ -9,30 +9,31 @@ export default function AuditPopup({
   buttonLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const [html, setHtml] = useState<string | null>(null);
+  const [reportData, setReportData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [scale, setScale] = useState(0.5); // Mobile zoom scale
+  const [zoom, setZoom] = useState(50); // Percentage
 
   async function openModal() {
     setOpen(true);
-    if (!html && !loading) {
+    if (!reportData && !loading) {
       setLoading(true);
       setErr(null);
       try {
         const res = await fetch(url, { cache: 'no-store' });
         if (!res.ok) throw new Error('Failed to fetch audit');
-        let txt = await res.text();
         
-        // Inject viewport meta tag for mobile scaling
-        if (!txt.includes('viewport')) {
-          txt = txt.replace(
-            '<head>',
-            '<head><meta name="viewport" content="width=680, initial-scale=0.4, minimum-scale=0.2, maximum-scale=3.0, user-scalable=yes">'
-          );
+        const contentType = res.headers.get('content-type');
+        
+        if (contentType?.includes('application/json')) {
+          // It's JSON with html_report field
+          const data = await res.json();
+          setReportData({ html: data.html_report });
+        } else {
+          // It's direct HTML
+          const html = await res.text();
+          setReportData({ html });
         }
-        
-        setHtml(txt);
       } catch (e: any) {
         setErr(e?.message || 'Could not load the audit');
       } finally {
@@ -47,7 +48,6 @@ export default function AuditPopup({
     }
     if (open) {
       window.addEventListener('keydown', onKey);
-      // Prevent body scroll when modal is open
       document.body.style.overflow = 'hidden';
     }
     return () => {
@@ -56,8 +56,8 @@ export default function AuditPopup({
     };
   }, [open]);
 
-  const zoomIn = () => setScale(Math.min(scale + 0.1, 1.5));
-  const zoomOut = () => setScale(Math.max(scale - 0.1, 0.3));
+  const zoomIn = () => setZoom(Math.min(zoom + 10, 150));
+  const zoomOut = () => setZoom(Math.max(zoom - 10, 30));
 
   return (
     <>
@@ -81,20 +81,23 @@ export default function AuditPopup({
             aria-label="Audit preview"
           >
             <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
-              <h3 className="text-white font-semibold text-sm md:text-base">Sample Audit</h3>
+              <div className="flex items-center gap-3">
+                <h3 className="text-white font-semibold text-sm md:text-base">Sample Audit</h3>
+                <span className="text-white/50 text-xs md:hidden">{zoom}%</span>
+              </div>
               <div className="flex gap-2">
                 {/* Zoom controls - mobile only */}
                 <div className="flex gap-1 md:hidden">
                   <button
                     onClick={zoomOut}
-                    className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-white/85 hover:bg-white/10"
+                    className="rounded-full border border-white/20 px-3 py-1.5 text-sm text-white/85 hover:bg-white/10"
                     title="Zoom out"
                   >
-                    -
+                    −
                   </button>
                   <button
                     onClick={zoomIn}
-                    className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-white/85 hover:bg-white/10"
+                    className="rounded-full border border-white/20 px-3 py-1.5 text-sm text-white/85 hover:bg-white/10"
                     title="Zoom in"
                   >
                     +
@@ -117,37 +120,17 @@ export default function AuditPopup({
             </div>
 
             <div className="mt-3 h-[80vh] md:h-[75vh] overflow-auto rounded-lg bg-white" style={{ WebkitOverflowScrolling: 'touch' }}>
-              {loading && <p className="p-4 text-white/70">Loading…</p>}
-              {err && <p className="p-4 text-red-400">{err}</p>}
-              {html && (
-                <>
-                  {/* Mobile: scaled view with zoom controls */}
-                  <div className="block md:hidden relative" style={{ 
-                    width: `${680 * scale}px`,
-                    height: '100%',
-                  }}>
-                    <iframe
-                      sandbox="allow-same-origin"
-                      srcDoc={html}
-                      className="border-0"
-                      title="Audit HTML Preview"
-                      style={{
-                        width: '680px',
-                        height: '3000px',
-                        transform: `scale(${scale})`,
-                        transformOrigin: 'top left',
-                      }}
-                    />
-                  </div>
-                  
-                  {/* Desktop: full size */}
-                  <iframe
-                    sandbox="allow-same-origin"
-                    srcDoc={html}
-                    className="hidden md:block h-full w-full border-0"
-                    title="Audit HTML Preview"
-                  />
-                </>
+              {loading && <p className="p-4 text-gray-700">Loading…</p>}
+              {err && <p className="p-4 text-red-600">{err}</p>}
+              {reportData?.html && (
+                <div
+                  className="origin-top-left transition-transform duration-200"
+                  style={{
+                    transform: `scale(${zoom / 100})`,
+                    width: `${(100 / zoom) * 100}%`,
+                  }}
+                  dangerouslySetInnerHTML={{ __html: reportData.html }}
+                />
               )}
             </div>
           </div>
