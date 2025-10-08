@@ -1,5 +1,4 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 
 export default function AuditPopup({
@@ -22,7 +21,16 @@ export default function AuditPopup({
       try {
         const res = await fetch(url, { cache: 'no-store' });
         if (!res.ok) throw new Error('Failed to fetch audit');
-        const txt = await res.text();
+        let txt = await res.text();
+        
+        // Inject viewport meta tag for mobile scaling
+        if (!txt.includes('viewport')) {
+          txt = txt.replace(
+            '<head>',
+            '<head><meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=3.0, user-scalable=yes">'
+          );
+        }
+        
         setHtml(txt);
       } catch (e: any) {
         setErr(e?.message || 'Could not load the audit');
@@ -36,8 +44,15 @@ export default function AuditPopup({
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') setOpen(false);
     }
-    if (open) window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    if (open) {
+      window.addEventListener('keydown', onKey);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
   }, [open]);
 
   return (
@@ -55,42 +70,47 @@ export default function AuditPopup({
           onClick={() => setOpen(false)}
         >
           <div
-            className="absolute left-1/2 top-1/2 w-[95vw] max-w-5xl -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-neutral-950 p-4 shadow-2xl"
+            className="absolute left-1/2 top-1/2 w-[95vw] max-w-5xl -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-neutral-950 p-4 shadow-2xl md:w-[90vw]"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-label="Audit preview"
           >
             <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
-              <h3 className="text-white font-semibold">Sample Audit</h3>
+              <h3 className="text-white font-semibold text-sm md:text-base">Sample Audit</h3>
               <div className="flex gap-2">
                 <a
                   href={url}
                   download
-                  className="rounded-full border border-white/20 px-3 py-1.5 text-sm text-white/85 hover:bg-white/10"
+                  className="rounded-full border border-white/20 px-3 py-1.5 text-xs md:text-sm text-white/85 hover:bg-white/10"
                 >
                   Download
                 </a>
                 <button
                   onClick={() => setOpen(false)}
-                  className="rounded-full border border-white/20 px-3 py-1.5 text-sm text-white/85 hover:bg-white/10"
+                  className="rounded-full border border-white/20 px-3 py-1.5 text-xs md:text-sm text-white/85 hover:bg-white/10"
                 >
                   Close
                 </button>
               </div>
             </div>
 
-            <div className="mt-3 h-[75vh] overflow-hidden rounded-lg">
+            <div className="mt-3 h-[80vh] md:h-[75vh] overflow-hidden rounded-lg">
               {loading && <p className="p-4 text-white/70">Loading…</p>}
               {err && <p className="p-4 text-red-400">{err}</p>}
               {html && (
-                <iframe
-                  // sandboxed = safe by default (no scripts run)
-                  sandbox=""
-                  srcDoc={html}
-                  className="h-full w-full rounded-lg bg-white"
-                  title="Audit HTML Preview"
-                />
+                <div className="h-full w-full overflow-auto rounded-lg bg-white" style={{ WebkitOverflowScrolling: 'touch' }}>
+                  <iframe
+                    sandbox=""
+                    srcDoc={html}
+                    className="h-full w-full min-h-[200vh] md:min-h-full border-0"
+                    title="Audit HTML Preview"
+                    style={{
+                      // Allow the iframe content to be its natural size
+                      minWidth: '680px',
+                    }}
+                  />
+                </div>
               )}
             </div>
           </div>
