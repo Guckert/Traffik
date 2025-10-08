@@ -1,30 +1,16 @@
 // src/app/api/checkout/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
-
-// ✅ Use your account’s default API version (no apiVersion typed)
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
-
-const PRICE_AUDIT = process.env.PRICE_AUDIT!;
-const PRICE_GBP   = process.env.PRICE_GBP!;
-
-// ...keep the rest of your file exactly the same...
-
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-// Initialize Stripe WITHOUT apiVersion so it uses your account default
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+// ✅ One Stripe instance, no apiVersion so it uses your account default
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
-// ENV (price ids or lookup keys)
+// Env can be either a price ID (price_...) or a lookup key (e.g. gbp_350_nzd)
 const RAW_PRICE_AUDIT = process.env.PRICE_AUDIT!;
 const RAW_PRICE_GBP   = process.env.PRICE_GBP!;
-
-// Simple in-memory cache (resets on cold start/redeploy)
-const priceCache = new Map<string, string>();
 
 function baseUrl(req: NextRequest) {
   const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '');
@@ -36,42 +22,22 @@ function rawFor(product: 'audit' | 'gbp') {
   return product === 'audit' ? RAW_PRICE_AUDIT : RAW_PRICE_GBP;
 }
 
-/** Resolve an env value that might be a real price ID or a lookup_key */
+// If RAW is a price_... ID, use it directly; otherwise treat it as a lookup key
 async function resolvePriceId(raw: string) {
-  // Already cached?
-  if (priceCache.has(raw)) return priceCache.get(raw)!;
+  if (raw.startsWith('price_') && !raw.includes(' ')) return raw;
 
-  // Already a Price ID?
-  if (raw.startsWith('price_') && !raw.includes(' ')) {
-    priceCache.set(raw, raw);
-    return raw;
-  }
-
-  // Try the typed Search API first
-  try {
-    const search = await stripe.prices.search({
-      query: `lookup_key:'${raw}' AND active:'true'`,
-      limit: 1,
-    });
-    if (search.data.length) {
-      const id = search.data[0].id;
-      priceCache.set(raw, id);
-      return id;
-    }
-  } catch {
-    // fall through to list()
-  }
-
-  // Fallback: list and find by lookup_key (typed)
   const list = await stripe.prices.list({
     active: true,
-    limit: 100,
-    expand: ['data.product'],
+    // lookup_keys is supported at runtime even if TS defs differ between versions
+    // @ts-ignore
+    lookup_keys: [raw],
+    limit: 1,
   });
-  const match = list.data.find((p) => p.lookup_key === raw);
-  if (!match) throw new Error(`No active Stripe price found for: ${raw}`);
-  priceCache.set(raw, match.id);
-  return match.id;
+
+  if (!list.data.length) {
+    throw new Error(`No active Stripe price found for: ${raw}`);
+  }
+  return list.data[0].id;
 }
 
 async function createSession(product: 'audit' | 'gbp', req: NextRequest) {
@@ -81,14 +47,11 @@ async function createSession(product: 'audit' | 'gbp', req: NextRequest) {
   const priceId = await resolvePriceId(raw);
 
   const base = baseUrl(req);
-  const success_url = `${base}/thank-you?product=${product}`;
-  const cancel_url  = `${base}/${product}`;
-
   return stripe.checkout.sessions.create({
     mode: 'payment',
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url,
-    cancel_url,
+    success_url: `${base}/thank-you?product=${product}`,
+    cancel_url: `${base}/${product}`,
     billing_address_collection: 'auto',
     allow_promotion_codes: true,
     metadata: { product },
