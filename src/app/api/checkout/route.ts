@@ -5,36 +5,14 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-// ✅ Use your account’s default API version (don’t pass apiVersion)
+// ✅ Use account default API version (avoid type mismatch issues)
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
-// Accept real price IDs (price_...) OR lookup keys via env
+// Price IDs (or lookup keys) from env
 const RAW_PRICE_AUDIT = process.env.PRICE_AUDIT!;
 const RAW_PRICE_GBP   = process.env.PRICE_GBP!;
 
-// --- Custom fields (max 3 allowed by Stripe Checkout) ---
-const CUSTOM_FIELDS: Stripe.Checkout.SessionCreateParams.CustomField[] = [
-  {
-    key: 'website_url',
-    label: { type: 'custom', custom: 'Website URL' },
-    type: 'text',
-    text: { maximum_length: 200, default_value: '' },
-    optional: false,
-  },
-  {
-    key: 'keywords',
-    label: { type: 'custom', custom: 'Target keywords (comma separated)' },
-    type: 'text',
-    text: {
-      maximum_length: 300,
-      default_value: '',
-      // Not in types, but Stripe renders it fine:
-      // @ts-expect-error
-      placeholder: 'e.g. blocked drains, hot water cylinder, gas fitting',
-    },
-    optional: false,
-  },
-];
+type ProductKey = 'audit' | 'gbp';
 
 function baseUrl(req: NextRequest) {
   const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '');
@@ -42,40 +20,96 @@ function baseUrl(req: NextRequest) {
   return envUrl || origin || 'http://localhost:3000';
 }
 
-function rawFor(product: 'audit' | 'gbp') {
+function rawFor(product: ProductKey) {
   return product === 'audit' ? RAW_PRICE_AUDIT : RAW_PRICE_GBP;
 }
 
-/** Resolve an env value that might be a price ID or a lookup_key */
+// If you’re using lookup keys, this resolves them to a price id; if you already
+// have price_... ids, they’re returned as-is.
 async function resolvePriceId(raw: string) {
   if (raw.startsWith('price_') && !raw.includes(' ')) return raw;
 
   const list = await stripe.prices.list({
     active: true,
-    // Some Stripe versions don’t type lookup_keys; ignore type here:
-    // @ts-ignore
+    // @ts-ignore — lookup_keys is supported at runtime even if not in the types
     lookup_keys: [raw],
     limit: 1,
     expand: ['data.product'],
   });
-
   if (!list.data.length) {
     throw new Error(`No active Stripe price found for: ${raw}`);
   }
   return list.data[0].id;
 }
 
-async function createSession(product: 'audit' | 'gbp', req: NextRequest) {
+// Helper to build a Stripe custom text field without sending empty default_value
+function customTextField(opts: {
+  key: string;
+  label: string;
+  required?: boolean;
+  defaultValue?: string | null;
+  min?: number;
+  max?: number;
+}) {
+  const { key, label, required = true, defaultValue, min = 3, max = 200 } = opts;
+
+  // Base field
+  const field: any = {
+    key,
+    label: { type: 'custom', custom: label },
+    type: 'text',
+    optional: !required,
+    text: {
+      // Only set these constraints; do NOT set default_value yet
+      minimum_length: min,
+      maximum_length: max,
+    },
+  };
+
+  // Only attach default_value if truthy & non-empty
+  const trimmed = (defaultValue ?? '').trim();
+  if (trimmed.length > 0) {
+    field.text.default_value = trimmed;
+  }
+
+  return field;
+}
+
+async function createSession(product: ProductKey, req: NextRequest) {
   const raw = rawFor(product);
   if (!raw) throw new Error(`Missing env for ${product} price`);
 
   const priceId = await resolvePriceId(raw);
-  const base    = baseUrl(req);
 
+  const base = baseUrl(req);
   const success_url = `${base}/thank-you?product=${product}`;
   const cancel_url  = `${base}/${product}`;
 
-  // Only allow promotion codes on the Audit
+  // Optional: allow prefill via query params
+  const url = new URL(req.url);
+  const sitePrefill = url.searchParams.get('site'); // e.g. https://example.co.nz
+  const kwPrefill   = url.searchParams.get('kw');   // e.g. plumber, christchurch, hot water
+
+  const custom_fields = [
+    customTextField({
+      key: 'website_url',
+      label: 'Website URL',
+      required: true,
+      defaultValue: sitePrefill,
+      min: 4,
+      max: 250,
+    }),
+    customTextField({
+      key: 'keywords',
+      label: 'Keywords (comma-separated)',
+      required: true,
+      defaultValue: kwPrefill,
+      min: 3,
+      max: 250,
+    }),
+  ];
+
+  // Promo codes only for Audit
   const allowPromo = product === 'audit';
 
   return stripe.checkout.sessions.create({
@@ -83,29 +117,35 @@ async function createSession(product: 'audit' | 'gbp', req: NextRequest) {
     line_items: [{ price: priceId, quantity: 1 }],
     success_url,
     cancel_url,
-    billing_address_collection: 'auto',
+
+    // Collect email automatically; Stripe also captures cardholder name.
+    customer_creation: 'always',
+
+    // 💡 Only enable this for Audit
     allow_promotion_codes: allowPromo,
-    custom_fields: CUSTOM_FIELDS,
-    // Keep track of which product they bought
+
+    // Our two required custom fields
+    custom_fields,
+
+    // Keep a hint of which product was purchased
     metadata: { product },
   });
 }
 
-// GET /api/checkout?p=audit|gbp -> redirects to hosted checkout
 export async function GET(req: NextRequest) {
-  const p = (new URL(req.url).searchParams.get('p') || '').toLowerCase();
+  const p = (new URL(req.url).searchParams.get('p') || '').toLowerCase() as ProductKey;
   if (p !== 'audit' && p !== 'gbp') {
     return NextResponse.json({ error: 'Unknown product' }, { status: 400 });
   }
   try {
-    const session = await createSession(p as 'audit' | 'gbp', req);
+    const session = await createSession(p, req);
     return NextResponse.redirect(session.url!, { status: 303 });
   } catch (e: any) {
+    console.error('Stripe checkout error', e);
     return NextResponse.json({ error: e?.message || 'Stripe error' }, { status: 500 });
   }
 }
 
-// POST { product: 'audit' | 'gbp' } -> returns { url }
 export async function POST(req: NextRequest) {
   try {
     const { product } = await req.json();
@@ -115,6 +155,7 @@ export async function POST(req: NextRequest) {
     const session = await createSession(product, req);
     return NextResponse.json({ url: session.url });
   } catch (e: any) {
+    console.error('Stripe checkout error', e);
     return NextResponse.json({ error: e?.message || 'Stripe error' }, { status: 500 });
   }
 }
