@@ -12,7 +12,20 @@ export default function AuditPopup({
   const [reportData, setReportData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [zoom, setZoom] = useState(50); // Percentage
+  
+  // Better default zoom for mobile - fit to screen
+  const getDefaultZoom = () => {
+    if (typeof window !== 'undefined') {
+      const vw = window.innerWidth;
+      if (vw < 768) {
+        // Mobile: calculate zoom to fit 680px report in 95vw
+        return Math.floor((vw * 0.9) / 680 * 100);
+      }
+    }
+    return 100; // Desktop default
+  };
+  
+  const [zoom, setZoom] = useState(getDefaultZoom());
 
   async function openModal() {
     setOpen(true);
@@ -74,7 +87,7 @@ export default function AuditPopup({
           onClick={() => setOpen(false)}
         >
           <div
-            className="absolute left-1/2 top-1/2 w-[95vw] max-w-5xl -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-neutral-950 p-4 shadow-2xl md:w-[90vw]"
+            className="absolute left-1/2 top-1/2 w-[95vw] max-w-5xl -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-neutral-950 p-2 md:p-4 shadow-2xl md:w-[90vw]"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -123,14 +136,26 @@ export default function AuditPopup({
               {loading && <p className="p-4 text-gray-700">Loading…</p>}
               {err && <p className="p-4 text-red-600">{err}</p>}
               {reportData?.html && (
-                <div
-                  className="origin-top-left transition-transform duration-200"
-                  style={{
-                    transform: `scale(${zoom / 100})`,
-                    width: `${(100 / zoom) * 100}%`,
-                  }}
-                  dangerouslySetInnerHTML={{ __html: reportData.html }}
-                />
+                <>
+                  {/* Mobile with zoom */}
+                  <div className="md:hidden overflow-x-hidden">
+                    <div
+                      className="transition-transform duration-200"
+                      style={{
+                        transform: `scale(${zoom / 100})`,
+                        transformOrigin: 'top left',
+                        width: '680px',
+                      }}
+                      dangerouslySetInnerHTML={{ __html: reportData.html }}
+                    />
+                  </div>
+                  
+                  {/* Desktop full size */}
+                  <div 
+                    className="hidden md:block"
+                    dangerouslySetInnerHTML={{ __html: reportData.html }}
+                  />
+                </>
               )}
             </div>
           </div>
