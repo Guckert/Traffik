@@ -12,6 +12,7 @@ export default function AuditPopup({
   const [html, setHtml] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [scale, setScale] = useState(0.5); // Mobile zoom scale
 
   async function openModal() {
     setOpen(true);
@@ -55,6 +56,9 @@ export default function AuditPopup({
     };
   }, [open]);
 
+  const zoomIn = () => setScale(Math.min(scale + 0.1, 1.5));
+  const zoomOut = () => setScale(Math.max(scale - 0.1, 0.3));
+
   return (
     <>
       <button
@@ -79,6 +83,23 @@ export default function AuditPopup({
             <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
               <h3 className="text-white font-semibold text-sm md:text-base">Sample Audit</h3>
               <div className="flex gap-2">
+                {/* Zoom controls - mobile only */}
+                <div className="flex gap-1 md:hidden">
+                  <button
+                    onClick={zoomOut}
+                    className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-white/85 hover:bg-white/10"
+                    title="Zoom out"
+                  >
+                    -
+                  </button>
+                  <button
+                    onClick={zoomIn}
+                    className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-white/85 hover:bg-white/10"
+                    title="Zoom in"
+                  >
+                    +
+                  </button>
+                </div>
                 <a
                   href={url}
                   download
@@ -95,22 +116,38 @@ export default function AuditPopup({
               </div>
             </div>
 
-            <div className="mt-3 h-[80vh] md:h-[75vh] overflow-hidden rounded-lg">
+            <div className="mt-3 h-[80vh] md:h-[75vh] overflow-auto rounded-lg bg-white" style={{ WebkitOverflowScrolling: 'touch' }}>
               {loading && <p className="p-4 text-white/70">Loading…</p>}
               {err && <p className="p-4 text-red-400">{err}</p>}
               {html && (
-                <div className="h-full w-full overflow-auto rounded-lg bg-white" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <>
+                  {/* Mobile: scaled view with zoom controls */}
+                  <div className="block md:hidden relative" style={{ 
+                    width: `${680 * scale}px`,
+                    height: '100%',
+                  }}>
+                    <iframe
+                      sandbox="allow-same-origin"
+                      srcDoc={html}
+                      className="border-0"
+                      title="Audit HTML Preview"
+                      style={{
+                        width: '680px',
+                        height: '3000px',
+                        transform: `scale(${scale})`,
+                        transformOrigin: 'top left',
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Desktop: full size */}
                   <iframe
-                    sandbox=""
+                    sandbox="allow-same-origin"
                     srcDoc={html}
-                    className="h-full w-full min-h-[200vh] md:min-h-full border-0"
+                    className="hidden md:block h-full w-full border-0"
                     title="Audit HTML Preview"
-                    style={{
-                      // Allow the iframe content to be its natural size
-                      minWidth: '680px',
-                    }}
                   />
-                </div>
+                </>
               )}
             </div>
           </div>
