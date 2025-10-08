@@ -5,10 +5,10 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-// Use your account default API version (don’t pass apiVersion here)
+// Use your account default API version
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
-// ENV can be either a real price id (price_…) or a lookup key you set on the price
+// ENV: can be a price_… id or a lookup_key
 const RAW_PRICE_AUDIT = process.env.PRICE_AUDIT!;
 const RAW_PRICE_GBP   = process.env.PRICE_GBP!;
 
@@ -18,18 +18,14 @@ function baseUrl(req: NextRequest) {
   return envUrl || origin || 'http://localhost:3000';
 }
 
-// If RAW is a price id, use it. Otherwise try to resolve by lookup_key.
 async function resolvePriceId(raw: string) {
   if (raw.startsWith('price_') && !raw.includes(' ')) return raw;
-
-  // Lookup-key path (works in Test/Live respectively)
   const list = await stripe.prices.list({
     active: true,
-    // @ts-ignore – lookup_keys exists even if not in your local typings
+    // @ts-ignore – lookup_keys is supported at runtime
     lookup_keys: [raw],
     limit: 1,
   });
-
   if (!list.data.length) throw new Error(`No active Stripe price found for: ${raw}`);
   return list.data[0].id;
 }
@@ -38,23 +34,57 @@ function rawFor(product: 'audit' | 'gbp') {
   return product === 'audit' ? RAW_PRICE_AUDIT : RAW_PRICE_GBP;
 }
 
+const CUSTOM_FIELDS: Stripe.Checkout.SessionCreateParams.CustomField[] = [
+  {
+    key: 'website_url',
+    label: { type: 'custom', custom: 'Website URL' },
+    type: 'text',
+    text: { maximum_length: 200 },
+    optional: false,
+  },
+  {
+    key: 'keyword_1',
+    label: { type: 'custom', custom: 'Target keyword #1' },
+    type: 'text',
+    text: { maximum_length: 100 },
+    optional: false,
+  },
+  {
+    key: 'keyword_2',
+    label: { type: 'custom', custom: 'Target keyword #2' },
+    type: 'text',
+    text: { maximum_length: 100 },
+    optional: true,
+  },
+  {
+    key: 'keyword_3',
+    label: { type: 'custom', custom: 'Target keyword #3' },
+    type: 'text',
+    text: { maximum_length: 100 },
+    optional: true,
+  },
+];
+
 async function createSession(product: 'audit' | 'gbp', req: NextRequest) {
   const priceId = await resolvePriceId(rawFor(product));
 
   const base = baseUrl(req);
-  const success_url = `${base}/thank-you?product=${product}`;
+  // Include {CHECKOUT_SESSION_ID} so the thank-you page can read details
+  const success_url = `${base}/thank-you?product=${product}&session_id={CHECKOUT_SESSION_ID}`;
   const cancel_url  = `${base}/${product}`;
 
-  // Show promo code box only for the Audit product
-  const allowPromo = product === 'audit';
+  const allowPromo = product === 'audit'; // promo box only for Audit
 
   return stripe.checkout.sessions.create({
     mode: 'payment',
     line_items: [{ price: priceId, quantity: 1 }],
     success_url,
     cancel_url,
-    billing_address_collection: 'auto',
-    ...(allowPromo ? { allow_promotion_codes: true } : {}),
+    // Email is collected automatically in Checkout
+    billing_address_collection: 'auto', // gives us billing name (“name on card” UI)
+    allow_promotion_codes: allowPromo ? true : undefined,
+    custom_fields: CUSTOM_FIELDS,
+    payment_method_types: ['card'],
     metadata: { product },
   });
 }
