@@ -3,7 +3,7 @@ export default function Footer(){
   return (<footer className="mt-16 border-t border-white/10">
     <div className="container py-10 grid gap-6 md:grid-cols-3 text-sm text-white/80">
       <div><div className="font-semibold text-brand-accent">Traffik AI Web Optimisation Limited</div>
-      <div>6 Nancy Avenue, Mairehau, Christchurch 8013, New Zealand</div>
+      
       <div>GST 146-492-606 • NZBN 9429053048431</div>
       <div>Hours: Mon–Fri 09:00–18:00 (NZT)</div></div>
       <div><div className="font-semibold">Contact</div>
