@@ -54,7 +54,8 @@ export default function Header() {
   }, [open]);
 
   return (
-    <div className="sticky top-0 z-50 border-b border-white/10 bg-black/60 backdrop-blur-md supports-[backdrop-filter]:bg-black/60">
+    {/* CHANGED: opaque on mobile, translucent only on lg+ */}
+    <div className="sticky top-0 z-50 border-b border-white/10 bg-black lg:bg-black/60 lg:backdrop-blur-md lg:supports-[backdrop-filter]:bg-black/60">
       <div className="container mx-auto flex items-center justify-between gap-4 px-4 py-3">
         {/* Brand block */}
         <Link href="/" className="group flex items-baseline gap-2">
@@ -84,14 +85,15 @@ export default function Header() {
 
         {/* Actions */}
         <div className="hidden items-center gap-2 lg:flex">
-          
-            <a href="tel:+64212968586"
+          <a
+            href="tel:+64212968586"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-sm text-white/90 hover:bg-white/10"
           >
             <PhoneIcon className="h-4 w-4" /> 021 296 8586
           </a>
-          
-            <a href="mailto:hello@traffik.nz"
+
+          <a
+            href="mailto:hello@traffik.nz"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-sm text-white/90 hover:bg-white/10"
           >
             <MailIcon className="h-4 w-4" /> hello@traffik.nz
@@ -110,16 +112,24 @@ export default function Header() {
 
       {/* Mobile menu overlay */}
       {open && (
-        <div className="fixed inset-0 z-[60] lg:hidden" style={{ backgroundColor: '#000', opacity: 1, backdropFilter: 'none', WebkitBackdropFilter: 'none' }} onClick={() => setOpen(false)}>
+        <div className="fixed inset-0 z-[60] lg:hidden">
+          {/* CHANGED: scrim; blocks page text behind */}
           <div
-            className="absolute right-0 top-0 h-full w-80 max-w-[80%] border-l border-white/10 shadow-2xl"
-            style={{ backgroundColor: '#000000', padding: '20px' }}
+            className="absolute inset-0 bg-black/80"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+          {/* CHANGED: solid panel, no translucency */}
+          <div
+            className="absolute right-0 top-0 h-full w-80 max-w-[85%] bg-neutral-950 text-white border-l border-white/10 shadow-2xl"
+            role="dialog"
+            aria-modal="true"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex items-center justify-between p-5">
               <div className="flex items-baseline gap-2">
                 <span className="text-lg font-extrabold tracking-wide text-brand-accent">TRAFFIK</span>
-                <span className="text-[10px] font-semibold uppercase text-white/60">AI WEB OPTIMISATION</span>
+                <span className="text-[10px] font-semibold uppercase text-white/70">AI WEB OPTIMISATION</span>
               </div>
               <button
                 className="rounded-md border border-white/15 p-2 text-white/80 hover:bg-white/10"
@@ -130,7 +140,7 @@ export default function Header() {
               </button>
             </div>
 
-            <nav className="flex flex-col gap-2">
+            <nav className="flex flex-col gap-1 px-3">
               {nav.map((item) => (
                 <Link
                   key={item.href}
@@ -139,7 +149,7 @@ export default function Header() {
                     'rounded-lg px-3 py-2 text-sm',
                     isActive(pathname, item.href)
                       ? 'bg-white/10 text-white'
-                      : 'text-white/80 hover:bg-white/5 hover:text-white'
+                      : 'text-white/90 hover:bg-white/10'
                   ].join(' ')}
                   onClick={() => setOpen(false)}
                 >
@@ -148,15 +158,16 @@ export default function Header() {
               ))}
             </nav>
 
-            <div className="mt-6 grid gap-2">
-              
-                <a href="tel:+64212968586"
+            <div className="mt-6 grid gap-2 px-3">
+              <a
+                href="tel:+64212968586"
                 className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
               >
                 <PhoneIcon className="h-4 w-4" /> 021 296 8586
               </a>
-              
-               <a href="mailto:hello@traffik.nz"
+
+              <a
+                href="mailto:hello@traffik.nz"
                 className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
               >
                 <MailIcon className="h-4 w-4" /> hello@traffik.nz
