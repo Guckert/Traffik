@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /* --- tiny inline icons (no external deps) --- */
 const PhoneIcon = (props: any) => (
@@ -46,11 +46,62 @@ function isActive(pathname: string, href: string) {
 export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   // lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
+  // close drawer on route change
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  // Esc to close + basic focus trap when open
+  useEffect(() => {
+    if (!open) return;
+
+    const el = panelRef.current;
+    const getFocusables = () =>
+      el?.querySelectorAll<HTMLElement>(
+        'a,button,textarea,input,select,summary,[tabindex]:not([tabindex="-1"])'
+      ) ?? ([] as unknown as NodeListOf<HTMLElement>);
+
+    // send focus to first focusable
+    const focusables = getFocusables();
+    focusables[0]?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        return;
+      }
+      if (e.key !== 'Tab') return;
+
+      const items = getFocusables();
+      if (!items.length) return;
+
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+
+      if (e.shiftKey) {
+        if (active === first || !el?.contains(active)) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (active === last || !el?.contains(active)) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
   return (
@@ -103,6 +154,8 @@ export default function Header() {
         <button
           className="inline-flex items-center rounded-md border border-white/15 p-2 text-white/90 hover:bg-white/10 lg:hidden"
           aria-label="Open menu"
+          aria-expanded={open}
+          aria-controls="mobile-menu"
           onClick={() => setOpen(true)}
         >
           <MenuIcon className="h-5 w-5" />
@@ -115,63 +168,71 @@ export default function Header() {
           {/* scrim; blocks page text behind */}
           <div
             className="absolute inset-0 bg-black/80"
-            onClick={() => setOpen(false)}
             aria-hidden="true"
+            onClick={() => setOpen(false)}
           />
-          {/* solid panel, no translucency */}
+          {/* solid panel, safe-area aware */}
           <div
-            className="absolute right-0 top-0 h-full w-80 max-w-[85%] bg-neutral-950 text-white border-l border-white/10 shadow-2xl"
+            ref={panelRef}
+            id="mobile-menu"
             role="dialog"
             aria-modal="true"
+            tabIndex={-1}
+            className="absolute right-0 top-0 h-full w-80 max-w-[85%] bg-neutral-950 text-white border-l border-white/10 shadow-2xl focus:outline-none motion-reduce:transition-none"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-4 flex items-center justify-between p-5">
-              <div className="flex items-baseline gap-2">
-                <span className="text-lg font-extrabold tracking-wide text-brand-accent">TRAFFIK</span>
-                <span className="text-[10px] font-semibold uppercase text-white/70">AI WEB OPTIMISATION</span>
-              </div>
-              <button
-                className="rounded-md border border-white/15 p-2 text-white/80 hover:bg-white/10"
-                aria-label="Close menu"
-                onClick={() => setOpen(false)}
-              >
-                <CloseIcon className="h-5 w-5" />
-              </button>
-            </div>
-
-            <nav className="flex flex-col gap-1 px-3">
-              {nav.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={[
-                    'rounded-lg px-3 py-2 text-sm',
-                    isActive(pathname, item.href)
-                      ? 'bg-white/10 text-white'
-                      : 'text-white/90 hover:bg-white/10'
-                  ].join(' ')}
+            <div className="px-5 pt-[max(env(safe-area-inset-top),20px)] pb-5">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-lg font-extrabold tracking-wide text-brand-accent">TRAFFIK</span>
+                  <span className="text-[10px] font-semibold uppercase text-white/70">AI WEB OPTIMISATION</span>
+                </div>
+                <button
+                  className="rounded-md border border-white/15 p-2 text-white/80 hover:bg-white/10"
+                  aria-label="Close menu"
                   onClick={() => setOpen(false)}
                 >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+                  <CloseIcon className="h-5 w-5" />
+                </button>
+              </div>
 
-            <div className="mt-6 grid gap-2 px-3">
-              <a
-                href="tel:+64212968586"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
-              >
-                <PhoneIcon className="h-4 w-4" /> 021 296 8586
-              </a>
+              <nav className="flex flex-col gap-1">
+                {nav.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={[
+                      'rounded-lg px-3 py-2 text-sm',
+                      isActive(pathname, item.href)
+                        ? 'bg-white/10 text-white'
+                        : 'text-white/90 hover:bg-white/10'
+                    ].join(' ')}
+                    onClick={() => setOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
 
-              <a
-                href="mailto:hello@traffik.nz"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
-              >
-                <MailIcon className="h-4 w-4" /> hello@traffik.nz
-              </a>
+              <div className="mt-6 grid gap-2">
+                <a
+                  href="tel:+64212968586"
+                  className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
+                >
+                  <PhoneIcon className="h-4 w-4" /> 021 296 8586
+                </a>
+
+                <a
+                  href="mailto:hello@traffik.nz"
+                  className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
+                >
+                  <MailIcon className="h-4 w-4" /> hello@traffik.nz
+                </a>
+              </div>
             </div>
+
+            {/* bottom safe area pad */}
+            <div className="pb-[max(env(safe-area-inset-bottom),20px)]" />
           </div>
         </div>
       )}
