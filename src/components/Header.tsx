@@ -1,3 +1,4 @@
+cat > src/components/Header.tsx << 'EOF'
 'use client';
 
 import Link from 'next/link';
@@ -167,3 +168,4 @@ export default function Header() {
     </div>
   );
 }
+EOF
