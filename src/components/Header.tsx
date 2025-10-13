@@ -112,7 +112,7 @@ export default function Header() {
       {open && (
         <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-md lg:hidden" onClick={() => setOpen(false)}>
           <div
-            <div className="absolute right-0 top-0 h-full w-80 max-w-[80%] border-l border-white/10 bg-black p-5 shadow-2xl"
+            <div className="absolute right-0 top-0 h-full w-80 max-w-[80%] border-l border-white/10 shadow-2xl" style={{ backgroundColor: '#000000', padding: '20px' }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">
