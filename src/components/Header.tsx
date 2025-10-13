@@ -84,13 +84,13 @@ export default function Header() {
 
         {/* Actions */}
         <div className="hidden items-center gap-2 lg:flex">
-          <a
+          
             href="tel:+64212968586"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-sm text-white/90 hover:bg-white/10"
           >
             <PhoneIcon className="h-4 w-4" /> 021 296 8586
           </a>
-          <a
+          
             href="mailto:hello@traffik.nz"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-sm text-white/90 hover:bg-white/10"
           >
@@ -110,9 +110,10 @@ export default function Header() {
 
       {/* Mobile menu overlay */}
       {open && (
-        <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-md lg:hidden" onClick={() => setOpen(false)}>
-          
-            <div className="absolute right-0 top-0 h-full w-80 max-w-[80%] border-l border-white/10 shadow-2xl" style={{ backgroundColor: '#000000', padding: '20px' }}
+        <div className="fixed inset-0 z-[60] lg:hidden" style={{ backgroundColor: 'rgba(0, 0, 0, 0.95)' }} onClick={() => setOpen(false)}>
+          <div
+            className="absolute right-0 top-0 h-full w-80 max-w-[80%] border-l border-white/10 shadow-2xl"
+            style={{ backgroundColor: '#000000', padding: '20px' }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">
@@ -148,13 +149,13 @@ export default function Header() {
             </nav>
 
             <div className="mt-6 grid gap-2">
-              <a
+              
                 href="tel:+64212968586"
                 className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
               >
                 <PhoneIcon className="h-4 w-4" /> 021 296 8586
               </a>
-              <a
+              
                 href="mailto:hello@traffik.nz"
                 className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
               >
