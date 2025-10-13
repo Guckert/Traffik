@@ -110,9 +110,9 @@ export default function Header() {
 
       {/* Mobile menu overlay */}
       {open && (
-        <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm lg:hidden" onClick={() => setOpen(false)}>
+        <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-md lg:hidden" onClick={() => setOpen(false)}>
           <div
-            className="absolute right-0 top-0 h-full w-80 max-w-[80%] border-l border-white/10 bg-neutral-950 p-5 shadow-2xl"
+            className="absolute right-0 top-0 h-full w-80 max-w-[80%] border-l border-white/10 bg-black p-5 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">
@@ -136,7 +136,7 @@ export default function Header() {
                   href={item.href}
                   className={[
                     'rounded-lg px-3 py-2 text-sm',
-                    isActive(usePathname(), item.href)
+                    isActive(pathname, item.href)
                       ? 'bg-white/10 text-white'
                       : 'text-white/80 hover:bg-white/5 hover:text-white'
                   ].join(' ')}
