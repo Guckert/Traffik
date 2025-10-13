@@ -12,7 +12,6 @@ export default function AuditPopup({
   const [reportData, setReportData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [zoom, setZoom] = useState(50);
 
   async function openModal() {
     setOpen(true);
@@ -33,13 +32,13 @@ export default function AuditPopup({
           if (!html.includes('<meta name="viewport"')) {
             html = html.replace(
               '<head>',
-              '<head><meta name="viewport" content="width=680, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">'
+              '<head><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">'
             );
             // Also add for documents without explicit <head>
             if (!html.includes('<head>')) {
               html = html.replace(
                 '<html>',
-                '<html><head><meta name="viewport" content="width=680, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes"></head>'
+                '<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes"></head>'
               );
             }
           }
@@ -52,12 +51,12 @@ export default function AuditPopup({
           if (!html.includes('<meta name="viewport"')) {
             html = html.replace(
               '<head>',
-              '<head><meta name="viewport" content="width=680, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">'
+              '<head><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">'
             );
             if (!html.includes('<head>')) {
               html = html.replace(
                 '<html>',
-                '<html><head><meta name="viewport" content="width=680, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes"></head>'
+                '<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes"></head>'
               );
             }
           }
@@ -72,6 +71,20 @@ export default function AuditPopup({
     }
   }
 
+  const downloadHTML = () => {
+    if (!reportData?.html) return;
+    
+    const blob = new Blob([reportData.html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'audit-report.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') setOpen(false);
@@ -85,9 +98,6 @@ export default function AuditPopup({
       document.body.style.overflow = '';
     };
   }, [open]);
-
-  const zoomIn = () => setZoom(Math.min(zoom + 10, 150));
-  const zoomOut = () => setZoom(Math.max(zoom - 10, 30));
 
   return (
     <>
@@ -111,35 +121,15 @@ export default function AuditPopup({
             aria-label="Audit preview"
           >
             <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
-              <div className="flex items-center gap-3">
-                <h3 className="text-white font-semibold text-sm md:text-base">Sample Audit</h3>
-                <span className="text-white/50 text-xs md:hidden">{zoom}%</span>
-              </div>
+              <h3 className="text-white font-semibold text-sm md:text-base">Sample Audit</h3>
               <div className="flex gap-2">
-                {/* Zoom controls - mobile only */}
-                <div className="flex gap-1 md:hidden">
-                  <button
-                    onClick={zoomOut}
-                    className="rounded-full border border-white/20 px-3 py-1.5 text-sm text-white/85 hover:bg-white/10"
-                    title="Zoom out"
-                  >
-                    −
-                  </button>
-                  <button
-                    onClick={zoomIn}
-                    className="rounded-full border border-white/20 px-3 py-1.5 text-sm text-white/85 hover:bg-white/10"
-                    title="Zoom in"
-                  >
-                    +
-                  </button>
-                </div>
-                <a
-                  href={url}
-                  download
-                  className="rounded-full border border-white/20 px-3 py-1.5 text-xs md:text-sm text-white/85 hover:bg-white/10"
+                <button
+                  onClick={downloadHTML}
+                  disabled={!reportData?.html}
+                  className="rounded-full border border-white/20 px-3 py-1.5 text-xs md:text-sm text-white/85 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Download
-                </a>
+                  Download HTML
+                </button>
                 <button
                   onClick={() => setOpen(false)}
                   className="rounded-full border border-white/20 px-3 py-1.5 text-xs md:text-sm text-white/85 hover:bg-white/10"
@@ -153,31 +143,12 @@ export default function AuditPopup({
               {loading && <p className="p-4 text-gray-700">Loading…</p>}
               {err && <p className="p-4 text-red-600">{err}</p>}
               {reportData?.html && (
-                <>
-                  {/* Mobile with zoom */}
-                  <div className="md:hidden relative" style={{ 
-                    width: `${680 * (zoom / 100)}px`,
-                    minHeight: '100%',
-                  }}>
-                    <div
-                      className="origin-top-left"
-                      style={{
-                        transform: `scale(${zoom / 100})`,
-                        transformOrigin: 'top left',
-                        width: '680px',
-                      }}
-                      dangerouslySetInnerHTML={{ __html: reportData.html }}
-                    />
-                  </div>
-                  
-                  {/* Desktop full size with iframe */}
-                  <iframe
-                    sandbox="allow-same-origin"
-                    srcDoc={reportData.html}
-                    className="hidden md:block h-full w-full border-0"
-                    title="Audit HTML Preview"
-                  />
-                </>
+                <iframe
+                  sandbox="allow-same-origin"
+                  srcDoc={reportData.html}
+                  className="h-full w-full border-0"
+                  title="Audit HTML Preview"
+                />
               )}
             </div>
           </div>
