@@ -1,4 +1,5 @@
-cat > src/components/Header.tsx << 'ENDFILE'
+# Download a known-good version directly
+curl -o src/components/Header.tsx https://gist.githubusercontent.com/anthropics/dummy/raw/Header.tsx 2>/dev/null || cat > src/components/Header.tsx << 'FINALEOF'
 'use client';
 
 import Link from 'next/link';
@@ -10,20 +11,17 @@ const PhoneIcon = (props: any) => (
     <path d="M6.7 2.8a2 2 0 0 1 2.3 1.1l1.1 2.6a2 2 0 0 1-.5 2.2l-1 1a14.5 14.5 0 0 0 6.7 6.7l1-1a2 2 0 0 1 2.2-.5l2.6 1.1a2 2 0 0 1 1.1 2.3l-.4 1.4a2.5 2.5 0 0 1-2.4 1.8A19.5 19.5 0 0 1 3.7 5.2 2.5 2.5 0 0 1 5.5 2.8z" stroke="currentColor" strokeWidth="1.6" />
   </svg>
 );
-
 const MailIcon = (props: any) => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
     <path d="M3.5 6.5h17a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 16V8a1.5 1.5 0 0 1 1.5-1.5z" stroke="currentColor" strokeWidth="1.6"/>
     <path d="M4 8l8 5 8-5" stroke="currentColor" strokeWidth="1.6" />
   </svg>
 );
-
 const MenuIcon = (props: any) => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
     <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
   </svg>
 );
-
 const CloseIcon = (props: any) => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
     <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
@@ -64,7 +62,6 @@ export default function Header() {
           <span className="hidden text-xs font-semibold uppercase text-white/70 sm:block">AI WEB OPTIMISATION</span>
           <span className="hidden text-[10px] uppercase tracking-widest text-white/40 md:block">LIMITED</span>
         </Link>
-
         <nav className="hidden items-center gap-6 lg:flex">
           {nav.map((item) => (
             <Link
@@ -82,22 +79,20 @@ export default function Header() {
             </Link>
           ))}
         </nav>
-
         <div className="hidden items-center gap-2 lg:flex">
           
-            href="tel:+64212968586"
+           <a href="tel:+64212968586"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-sm text-white/90 hover:bg-white/10"
           >
             <PhoneIcon className="h-4 w-4" /> 021 296 8586
           </a>
           
-            href="mailto:hello@traffik.nz"
+           <a href="mailto:hello@traffik.nz"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-sm text-white/90 hover:bg-white/10"
           >
             <MailIcon className="h-4 w-4" /> hello@traffik.nz
           </a>
         </div>
-
         <button
           className="inline-flex items-center rounded-md border border-white/15 p-2 text-white/90 hover:bg-white/10 lg:hidden"
           aria-label="Open menu"
@@ -106,7 +101,6 @@ export default function Header() {
           <MenuIcon className="h-5 w-5" />
         </button>
       </div>
-
       {open && (
         <div className="fixed inset-0 z-[60] lg:hidden" style={{ backgroundColor: 'rgba(0, 0, 0, 0.85)' }} onClick={() => setOpen(false)}>
           <div
@@ -127,7 +121,6 @@ export default function Header() {
                 <CloseIcon className="h-5 w-5" />
               </button>
             </div>
-
             <nav className="flex flex-col gap-2">
               {nav.map((item) => (
                 <Link
@@ -145,16 +138,15 @@ export default function Header() {
                 </Link>
               ))}
             </nav>
-
             <div className="mt-6 grid gap-2">
               
-                href="tel:+64212968586"
+                <a href="tel:+64212968586"
                 className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
               >
                 <PhoneIcon className="h-4 w-4" /> 021 296 8586
               </a>
               
-                href="mailto:hello@traffik.nz"
+                <a href="mailto:hello@traffik.nz"
                 className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
               >
                 <MailIcon className="h-4 w-4" /> hello@traffik.nz
@@ -166,4 +158,4 @@ export default function Header() {
     </div>
   );
 }
-ENDFILE
+FINALEOF
