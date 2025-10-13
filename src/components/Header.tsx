@@ -110,12 +110,25 @@ export default function Header() {
 
       {/* Mobile menu overlay */}
       {open && (
-        <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-md lg:hidden" onClick={() => setOpen(false)}>
+        <div className="fixed inset-0 z-[60] lg:hidden" style={{ backgroundColor: 'rgba(0, 0, 0, 0.85)' }} onClick={() => setOpen(false)}>
           <div
-            className="absolute right-0 top-0 h-full w-80 max-w-[80%] border-l border-white/10 p-5 shadow-2xl"
-            style={{ backgroundColor: 'rgb(0, 0, 0)' }}
+            className="absolute right-0 top-0 h-full w-80 max-w-[80%] border-l border-white/10 shadow-2xl"
+            style={{ 
+              backgroundColor: '#0a0a0a',
+              padding: '20px'
+            }}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Solid background overlay to block any transparency */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: '#000000',
+              zIndex: -1
+            }} />
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-baseline gap-2">
                 <span className="text-lg font-extrabold tracking-wide text-brand-accent">TRAFFIK</span>
@@ -130,7 +143,7 @@ export default function Header() {
               </button>
             </div>
 
-            <nav className="flex flex-col gap-2">
+            <nav className="flex flex-col gap-2" style={{ position: 'relative', zIndex: 1 }}>
               {nav.map((item) => (
                 <Link
                   key={item.href}
