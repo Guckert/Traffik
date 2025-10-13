@@ -32,13 +32,13 @@ export default function AuditPopup({
           if (!html.includes('<meta name="viewport"')) {
             html = html.replace(
               '<head>',
-              '<head><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">'
+              '<head><meta name="viewport" content="width=1200, initial-scale=0.3, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">'
             );
             // Also add for documents without explicit <head>
             if (!html.includes('<head>')) {
               html = html.replace(
                 '<html>',
-                '<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes"></head>'
+                '<html><head><meta name="viewport" content="width=1200, initial-scale=0.3, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes"></head>'
               );
             }
           }
@@ -51,12 +51,12 @@ export default function AuditPopup({
           if (!html.includes('<meta name="viewport"')) {
             html = html.replace(
               '<head>',
-              '<head><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">'
+              '<head><meta name="viewport" content="width=1200, initial-scale=0.3, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">'
             );
             if (!html.includes('<head>')) {
               html = html.replace(
                 '<html>',
-                '<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes"></head>'
+                '<html><head><meta name="viewport" content="width=1200, initial-scale=0.3, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes"></head>'
               );
             }
           }
