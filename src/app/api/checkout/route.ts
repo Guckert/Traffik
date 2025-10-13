@@ -109,7 +109,9 @@ async function createSession(product: ProductKey, req: NextRequest) {
     }),
   ];
 
-  const allowPromo = product === 'audit'; // promo codes for Audit only
+ 
+const allowPromo = true;
+
 
   return stripe.checkout.sessions.create({
     mode: 'payment',
