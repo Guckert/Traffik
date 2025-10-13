@@ -111,7 +111,7 @@ export default function Header() {
       {/* Mobile menu overlay */}
       {open && (
         <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-md lg:hidden" onClick={() => setOpen(false)}>
-          <div
+          
             <div className="absolute right-0 top-0 h-full w-80 max-w-[80%] border-l border-white/10 shadow-2xl" style={{ backgroundColor: '#000000', padding: '20px' }}
             onClick={(e) => e.stopPropagation()}
           >
