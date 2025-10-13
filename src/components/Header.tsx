@@ -84,13 +84,13 @@ export default function Header() {
 
         {/* Actions */}
         <div className="hidden items-center gap-2 lg:flex">
-          <a
+          
             href="tel:+64212968586"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-sm text-white/90 hover:bg-white/10"
           >
             <PhoneIcon className="h-4 w-4" /> 021 296 8586
           </a>
-          <a
+          
             href="mailto:hello@traffik.nz"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-sm text-white/90 hover:bg-white/10"
           >
@@ -162,13 +162,13 @@ export default function Header() {
             </nav>
 
             <div className="mt-6 grid gap-2">
-              <a
+              
                 href="tel:+64212968586"
                 className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
               >
                 <PhoneIcon className="h-4 w-4" /> 021 296 8586
               </a>
-              <a
+              
                 href="mailto:hello@traffik.nz"
                 className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
               >
