@@ -4,30 +4,31 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-/* --- tiny inline icons (no external deps) --- */
 const PhoneIcon = (props: any) => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
     <path d="M6.7 2.8a2 2 0 0 1 2.3 1.1l1.1 2.6a2 2 0 0 1-.5 2.2l-1 1a14.5 14.5 0 0 0 6.7 6.7l1-1a2 2 0 0 1 2.2-.5l2.6 1.1a2 2 0 0 1 1.1 2.3l-.4 1.4a2.5 2.5 0 0 1-2.4 1.8A19.5 19.5 0 0 1 3.7 5.2 2.5 2.5 0 0 1 5.5 2.8z" stroke="currentColor" strokeWidth="1.6" />
   </svg>
 );
+
 const MailIcon = (props: any) => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
     <path d="M3.5 6.5h17a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 16V8a1.5 1.5 0 0 1 1.5-1.5z" stroke="currentColor" strokeWidth="1.6"/>
     <path d="M4 8l8 5 8-5" stroke="currentColor" strokeWidth="1.6" />
   </svg>
 );
+
 const MenuIcon = (props: any) => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
     <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
   </svg>
 );
+
 const CloseIcon = (props: any) => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
     <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
   </svg>
 );
 
-/* --- helpers --- */
 const nav = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
@@ -47,23 +48,22 @@ export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  // lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [open]);
 
   return (
     <div className="sticky top-0 z-50 border-b border-white/10 bg-black/60 backdrop-blur-md supports-[backdrop-filter]:bg-black/60">
       <div className="container mx-auto flex items-center justify-between gap-4 px-4 py-3">
-        {/* Brand block */}
         <Link href="/" className="group flex items-baseline gap-2">
           <span className="text-xl font-extrabold tracking-wide text-brand-accent group-hover:opacity-90">TRAFFIK</span>
           <span className="hidden text-xs font-semibold uppercase text-white/70 sm:block">AI WEB OPTIMISATION</span>
           <span className="hidden text-[10px] uppercase tracking-widest text-white/40 md:block">LIMITED</span>
         </Link>
 
-        {/* Desktop nav */}
         <nav className="hidden items-center gap-6 lg:flex">
           {nav.map((item) => (
             <Link
@@ -82,7 +82,6 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Actions */}
         <div className="hidden items-center gap-2 lg:flex">
           
             href="tel:+64212968586"
@@ -98,7 +97,6 @@ export default function Header() {
           </a>
         </div>
 
-        {/* Mobile toggle */}
         <button
           className="inline-flex items-center rounded-md border border-white/15 p-2 text-white/90 hover:bg-white/10 lg:hidden"
           aria-label="Open menu"
@@ -108,27 +106,15 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile menu overlay */}
       {open && (
         <div className="fixed inset-0 z-[60] lg:hidden" style={{ backgroundColor: 'rgba(0, 0, 0, 0.85)' }} onClick={() => setOpen(false)}>
           <div
             className="absolute right-0 top-0 h-full w-80 max-w-[80%] border-l border-white/10 shadow-2xl"
-            style={{ 
-              backgroundColor: '#0a0a0a',
-              padding: '20px'
-            }}
+            style={{ backgroundColor: '#0a0a0a', padding: '20px' }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Solid background overlay to block any transparency */}
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: '#000000',
-              zIndex: -1
-            }} />
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#000000', zIndex: -1 }} />
+            
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-baseline gap-2">
                 <span className="text-lg font-extrabold tracking-wide text-brand-accent">TRAFFIK</span>
