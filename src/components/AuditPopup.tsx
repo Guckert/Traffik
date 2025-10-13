@@ -26,41 +26,9 @@ export default function AuditPopup({
         
         if (contentType?.includes('application/json')) {
           const data = await res.json();
-          let html = data.html_report || data.html || '';
-          
-          // Inject viewport meta tag for better mobile scaling
-          if (!html.includes('<meta name="viewport"')) {
-            html = html.replace(
-              '<head>',
-              '<head><meta name="viewport" content="width=1200, initial-scale=0.3, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">'
-            );
-            // Also add for documents without explicit <head>
-            if (!html.includes('<head>')) {
-              html = html.replace(
-                '<html>',
-                '<html><head><meta name="viewport" content="width=1200, initial-scale=0.3, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes"></head>'
-              );
-            }
-          }
-          
-          setReportData({ html });
+          setReportData({ html: data.html_report || data.html || '' });
         } else {
-          let html = await res.text();
-          
-          // Inject viewport meta tag
-          if (!html.includes('<meta name="viewport"')) {
-            html = html.replace(
-              '<head>',
-              '<head><meta name="viewport" content="width=1200, initial-scale=0.3, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">'
-            );
-            if (!html.includes('<head>')) {
-              html = html.replace(
-                '<html>',
-                '<html><head><meta name="viewport" content="width=1200, initial-scale=0.3, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes"></head>'
-              );
-            }
-          }
-          
+          const html = await res.text();
           setReportData({ html });
         }
       } catch (e: any) {
@@ -143,12 +111,31 @@ export default function AuditPopup({
               {loading && <p className="p-4 text-gray-700">Loading…</p>}
               {err && <p className="p-4 text-red-600">{err}</p>}
               {reportData?.html && (
-                <iframe
-                  sandbox="allow-same-origin"
-                  srcDoc={reportData.html}
-                  className="h-full w-full border-0"
-                  title="Audit HTML Preview"
-                />
+                <>
+                  {/* Mobile view with scaling */}
+                  <div className="md:hidden w-full h-full overflow-auto" style={{ 
+                    WebkitOverflowScrolling: 'touch',
+                    touchAction: 'pan-x pan-y pinch-zoom'
+                  }}>
+                    <div 
+                      dangerouslySetInnerHTML={{ __html: reportData.html }}
+                      style={{
+                        transform: 'scale(0.5)',
+                        transformOrigin: 'top left',
+                        width: '200%',
+                        minHeight: '100%'
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Desktop view - full size iframe */}
+                  <iframe
+                    sandbox="allow-same-origin allow-scripts"
+                    srcDoc={reportData.html}
+                    className="hidden md:block h-full w-full border-0"
+                    title="Audit HTML Preview"
+                  />
+                </>
               )}
             </div>
           </div>
