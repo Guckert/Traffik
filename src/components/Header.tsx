@@ -54,7 +54,6 @@ export default function Header() {
   }, [open]);
 
   return (
-    {/* CHANGED: opaque on mobile, translucent only on lg+ */}
     <div className="sticky top-0 z-50 border-b border-white/10 bg-black lg:bg-black/60 lg:backdrop-blur-md lg:supports-[backdrop-filter]:bg-black/60">
       <div className="container mx-auto flex items-center justify-between gap-4 px-4 py-3">
         {/* Brand block */}
@@ -113,13 +112,13 @@ export default function Header() {
       {/* Mobile menu overlay */}
       {open && (
         <div className="fixed inset-0 z-[60] lg:hidden">
-          {/* CHANGED: scrim; blocks page text behind */}
+          {/* scrim; blocks page text behind */}
           <div
             className="absolute inset-0 bg-black/80"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
-          {/* CHANGED: solid panel, no translucency */}
+          {/* solid panel, no translucency */}
           <div
             className="absolute right-0 top-0 h-full w-80 max-w-[85%] bg-neutral-950 text-white border-l border-white/10 shadow-2xl"
             role="dialog"
