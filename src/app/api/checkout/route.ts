@@ -110,7 +110,7 @@ async function createSession(product: ProductKey, req: NextRequest) {
   ];
 
  
-const allowPromo = true;
+  const allowPromo = true;
 
 
   return stripe.checkout.sessions.create({
