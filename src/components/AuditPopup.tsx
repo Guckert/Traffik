@@ -12,20 +12,7 @@ export default function AuditPopup({
   const [reportData, setReportData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  
-  // Better default zoom for mobile - fit to screen
-  const getDefaultZoom = () => {
-    if (typeof window !== 'undefined') {
-      const vw = window.innerWidth;
-      if (vw < 768) {
-        // Mobile: calculate zoom to fit 680px report in 95vw
-        return Math.floor((vw * 0.9) / 680 * 100);
-      }
-    }
-    return 100; // Desktop default
-  };
-  
-  const [zoom, setZoom] = useState(getDefaultZoom());
+  const [zoom, setZoom] = useState(50);
 
   async function openModal() {
     setOpen(true);
@@ -39,12 +26,42 @@ export default function AuditPopup({
         const contentType = res.headers.get('content-type');
         
         if (contentType?.includes('application/json')) {
-          // It's JSON with html_report field
           const data = await res.json();
-          setReportData({ html: data.html_report });
+          let html = data.html_report || data.html || '';
+          
+          // Inject viewport meta tag for better mobile scaling
+          if (!html.includes('<meta name="viewport"')) {
+            html = html.replace(
+              '<head>',
+              '<head><meta name="viewport" content="width=680, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">'
+            );
+            // Also add for documents without explicit <head>
+            if (!html.includes('<head>')) {
+              html = html.replace(
+                '<html>',
+                '<html><head><meta name="viewport" content="width=680, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes"></head>'
+              );
+            }
+          }
+          
+          setReportData({ html });
         } else {
-          // It's direct HTML
-          const html = await res.text();
+          let html = await res.text();
+          
+          // Inject viewport meta tag
+          if (!html.includes('<meta name="viewport"')) {
+            html = html.replace(
+              '<head>',
+              '<head><meta name="viewport" content="width=680, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">'
+            );
+            if (!html.includes('<head>')) {
+              html = html.replace(
+                '<html>',
+                '<html><head><meta name="viewport" content="width=680, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes"></head>'
+              );
+            }
+          }
+          
           setReportData({ html });
         }
       } catch (e: any) {
@@ -95,11 +112,12 @@ export default function AuditPopup({
           >
             <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
               <div className="flex items-center gap-3">
-              <h3 className="text-white font-semibold text-sm md:text-base">Sample Audit {zoom}%</h3>
+                <h3 className="text-white font-semibold text-sm md:text-base">Sample Audit</h3>
+                <span className="text-white/50 text-xs md:hidden">{zoom}%</span>
               </div>
               <div className="flex gap-2">
                 {/* Zoom controls - mobile only */}
-               <div className="flex gap-1" style={{border: '2px solid red'}}>
+                <div className="flex gap-1 md:hidden">
                   <button
                     onClick={zoomOut}
                     className="rounded-full border border-white/20 px-3 py-1.5 text-sm text-white/85 hover:bg-white/10"
@@ -137,9 +155,12 @@ export default function AuditPopup({
               {reportData?.html && (
                 <>
                   {/* Mobile with zoom */}
-                  <div className="md:hidden overflow-x-hidden">
+                  <div className="md:hidden relative" style={{ 
+                    width: `${680 * (zoom / 100)}px`,
+                    minHeight: '100%',
+                  }}>
                     <div
-                      className="transition-transform duration-200"
+                      className="origin-top-left"
                       style={{
                         transform: `scale(${zoom / 100})`,
                         transformOrigin: 'top left',
@@ -149,10 +170,12 @@ export default function AuditPopup({
                     />
                   </div>
                   
-                  {/* Desktop full size */}
-                  <div 
-                    className="hidden md:block"
-                    dangerouslySetInnerHTML={{ __html: reportData.html }}
+                  {/* Desktop full size with iframe */}
+                  <iframe
+                    sandbox="allow-same-origin"
+                    srcDoc={reportData.html}
+                    className="hidden md:block h-full w-full border-0"
+                    title="Audit HTML Preview"
                   />
                 </>
               )}
