@@ -7,7 +7,6 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  // ✅ canonical base: www
   metadataBase: new URL('https://www.traffik.nz'),
   title: {
     default: 'AI Website Optimisation for NZ Trades | Traffik.nz',
@@ -46,7 +45,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  // ✅ single JSON-LD (Organization + MarketingAgency + WebSite), all on www
+  // ✅ JSON-LD: Organization + LocalBusiness + WebSite (all on www)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -68,7 +67,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         ],
       },
       {
-        '@type': 'MarketingAgency',
+        '@type': 'LocalBusiness', // ← was MarketingAgency (not valid)
         '@id': 'https://www.traffik.nz/#local',
         name: 'Traffik — AI Web Optimisation',
         url: 'https://www.traffik.nz/',
@@ -123,17 +122,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
-        {/* ✅ canonical on www */}
         <link rel="canonical" href="https://www.traffik.nz/" />
-
-        {/* ✅ ONE JSON-LD block */}
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-
-        {/* ✅ one set of icons + one manifest link */}
         <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
         <link rel="icon" href="/favicon-16x16.png" sizes="16x16" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
