@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
+  // Canonical base: https://www.traffik.nz
   metadataBase: new URL('https://www.traffik.nz'),
   title: {
     default: 'AI Website Optimisation for NZ Trades | Traffik.nz',
@@ -45,7 +46,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  // ✅ JSON-LD: Organization + LocalBusiness + WebSite (all on www)
+  // Single JSON-LD graph (Organization + LocalBusiness + WebSite)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -67,19 +68,30 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         ],
       },
       {
-        '@type': 'LocalBusiness', // ← was MarketingAgency (not valid)
+        // Service-area business: no street/postcode
+        '@type': 'LocalBusiness',
         '@id': 'https://www.traffik.nz/#local',
         name: 'Traffik — AI Web Optimisation',
         url: 'https://www.traffik.nz/',
         image: 'https://www.traffik.nz/og-image.jpg',
         priceRange: '$$',
         telephone: '+64-21-296-8586',
+
         areaServed: { '@type': 'Country', name: 'New Zealand' },
-        address: {
-          '@type': 'PostalAddress',
-          addressCountry: 'NZ',
-          addressLocality: 'Christchurch',
-        },
+        serviceArea: [
+          { '@type': 'AdministrativeArea', name: 'Christchurch' },
+          { '@type': 'AdministrativeArea', name: 'Canterbury' },
+        ],
+
+        openingHoursSpecification: [
+          {
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+            opens: '09:00',
+            closes: '18:00',
+          },
+        ],
+
         parentOrganization: { '@id': 'https://www.traffik.nz/#org' },
         hasOfferCatalog: {
           '@type': 'OfferCatalog',
@@ -122,12 +134,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        {/* Canonical */}
         <link rel="canonical" href="https://www.traffik.nz/" />
+
+        {/* JSON-LD */}
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+
+        {/* Icons / Manifest */}
         <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
         <link rel="icon" href="/favicon-16x16.png" sizes="16x16" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
