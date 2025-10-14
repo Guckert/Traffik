@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://traffik.nz/sitemap.xml
+Sitemap: https://www.traffik.nz/sitemap.xml
+
