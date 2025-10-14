@@ -2,7 +2,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import Script from 'next/script';
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -31,7 +30,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         '@id': 'https://traffik.nz/#org',
         name: 'Traffik',
         url: 'https://traffik.nz/',
-        logo: 'https://traffik.nz/logo.png',
+        logo: 'https://traffik.nz/logo.png', // make sure /public/logo.png exists (>=112x112)
         sameAs: [],
         contactPoint: [
           {
@@ -76,18 +75,23 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="en">
+      <head>
+        {/* ONE server-rendered JSON-LD block (no client duplication) */}
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        {/* favicons (optional) */}
+        <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
+        <link rel="icon" href="/favicon-16x16.png" sizes="16x16" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.webmanifest" crossOrigin="use-credentials" />
+      </head>
       <body className="bg-black text-white">
         <Header />
         {children}
         <Footer />
-
-        {/* Structured data: next/script with beforeInteractive -> ends up in <head>, no duplicates */}
-        <Script
-          id="schema-graph"
-          type="application/ld+json"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
       </body>
     </html>
   );
