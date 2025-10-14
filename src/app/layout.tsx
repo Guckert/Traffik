@@ -99,3 +99,51 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               price: '350.00',
               priceCurrency: 'NZD',
               url: 'https://www.traffik.nz/gbp',
+            },
+            {
+              '@type': 'Offer',
+              name: 'AI Visibility System — $3,450/month',
+              price: '3450.00',
+              priceCurrency: 'NZD',
+              url: 'https://www.traffik.nz/ai-visibility',
+            },
+          ],
+        },
+      },
+      {
+        '@type': 'WebSite',
+        '@id': 'https://www.traffik.nz/#website',
+        url: 'https://www.traffik.nz/',
+        name: 'Traffik.nz',
+        publisher: { '@id': 'https://www.traffik.nz/#org' },
+      },
+    ],
+  };
+
+  return (
+    <html lang="en">
+      <head>
+        {/* ✅ canonical on www */}
+        <link rel="canonical" href="https://www.traffik.nz/" />
+
+        {/* ✅ ONE JSON-LD block */}
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+
+        {/* ✅ one set of icons + one manifest link */}
+        <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
+        <link rel="icon" href="/favicon-16x16.png" sizes="16x16" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.webmanifest" crossOrigin="use-credentials" />
+      </head>
+      <body className="bg-black text-white">
+        <Header />
+        {children}
+        <Footer />
+      </body>
+    </html>
+  );
+}
