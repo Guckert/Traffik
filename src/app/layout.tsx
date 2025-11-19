@@ -2,7 +2,8 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import Script from 'next/script';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -44,6 +45,8 @@ export const metadata: Metadata = {
     },
   },
 };
+
+const GA_MEASUREMENT_ID = 'G-FXCH0GL6V4';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   // Single JSON-LD graph (Organization + LocalBusiness + WebSite)
@@ -148,12 +151,31 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
         <link rel="icon" href="/favicon-16x16.png" sizes="16x16" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/manifest.webmanifest" crossOrigin="use-credentials" />
+        <link
+          rel="manifest"
+          href="/manifest.webmanifest"
+          crossOrigin="use-credentials"
+        />
       </head>
       <body className="bg-black text-white">
+        {/* GA4 base code */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
+
         <Header />
         {children}
         <Footer />
+        <SpeedInsights />
       </body>
     </html>
   );
