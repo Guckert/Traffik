@@ -45,7 +45,10 @@ export const metadata: Metadata = {
   },
 };
 
-const GA_MEASUREMENT_ID = 'G-FXCH0GL6V4';
+// Google tag (gtag.js) ID – central ID that routes to GA4 + Ads destinations
+const GOOGLE_TAG_ID = 'GT-TNC3NJQH';
+
+// Meta Pixel
 const META_PIXEL_ID = '731994975939671';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -158,17 +161,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body className="bg-black text-white">
-        {/* GA4 base code */}
+        {/* Google tag (gtag.js) – single tag for GA4 + Ads */}
         <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}`}
           strategy="afterInteractive"
         />
-        <Script id="ga4-init" strategy="afterInteractive">
+        <Script id="google-tag-init" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${GA_MEASUREMENT_ID}');
+
+            // Google tag config (GT ID from Data Manager)
+            gtag('config', '${GOOGLE_TAG_ID}');
           `}
         </Script>
 
@@ -178,11 +183,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             !(function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
             n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            if(!f._fbq)f._fbq=n;n.push=n.loaded=!0;n.version='2.0';
             n.queue=[];t=b.createElement(e);t.async=!0;
             t.src=v;s=b.getElementsByTagName(e)[0];
             s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
+            'https://connect.facebook.net/en_US/fbevents.js'));
             fbq('init', '${META_PIXEL_ID}');
             fbq('track', 'PageView');
           `}
