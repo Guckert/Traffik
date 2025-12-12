@@ -4,6 +4,9 @@ import React, { useEffect, useRef } from 'react';
 import HeroLeft from '@/components/HeroLeft';
 import AuditPopup from '@/components/AuditPopup';
 
+import { motion } from 'framer-motion';
+import { fadeUp, fadeIn, staggerContainer, card } from '@/lib/animations';
+
 export default function AuditPage() {
   const auditPopupRef = useRef<HTMLDivElement>(null);
 
@@ -25,12 +28,9 @@ export default function AuditPage() {
   return (
     <main>
 
-      {/* Invisible anchor for sample audit modal trigger */}
       <div id="sample-audit" className="hidden" />
 
-      {/* ---------------------------------------------------------
-            HERO SECTION — Steve avatar + Tradie messaging
-      ---------------------------------------------------------- */}
+      {/* HERO (HeroLeft has its own animation on the avatar now) */}
       <HeroLeft
         imageSrc="/images/audit-hero.jpg"
         imageAlt="Website audit dashboard on screen"
@@ -49,10 +49,14 @@ export default function AuditPage() {
         avatarVideoSrc="/videos/steve-urgency.mp4"
       />
 
-      {/* ---------------------------------------------------------
-             WHY NOW SECTION — Urgency & competitive pressure
-      ---------------------------------------------------------- */}
-      <section className="container py-12">
+      {/* WHY NOW */}
+      <motion.section
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+        className="container py-12"
+      >
         <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">Why now?</h2>
 
         <p className="mt-4 text-white/85 max-w-3xl">
@@ -61,100 +65,113 @@ export default function AuditPage() {
           <br /><br />
           This audit shows you exactly what’s broken — before it costs you real tradie jobs.
         </p>
-      </section>
+      </motion.section>
 
-      {/* ---------------------------------------------------------
-            WHAT'S INCLUDED — Your premium grid system
-      ---------------------------------------------------------- */}
-      <section className="container py-12">
-        <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">What's included</h2>
+      {/* WHAT'S INCLUDED */}
+      <motion.section
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+        className="container py-12"
+      >
+        <motion.h2
+          variants={fadeUp}
+          className="text-2xl md:text-3xl font-semibold text-brand-accent"
+        >
+          What's included
+        </motion.h2>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
 
-          {/* Performance */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-lg font-semibold text-white">Performance (mobile-first)</h3>
-            <ul className="mt-3 space-y-2 text-white/85">
-              <li>• Lighthouse Performance score (mobile)</li>
-              <li>• Core Web Vitals: LCP, CLS, TBT, FCP</li>
-              <li>• Bottlenecks: JavaScript, CSS, images, caching</li>
-            </ul>
-          </div>
-
-          {/* SEO */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-lg font-semibold text-white">SEO signals</h3>
-            <ul className="mt-3 space-y-2 text-white/85">
-              <li>• Lighthouse SEO score</li>
-              <li>• Titles, meta descriptions & canonicals</li>
-              <li>• Crawlability & indexability checks</li>
-            </ul>
-          </div>
-
-          {/* Technical */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-lg font-semibold text-white">Technical best practices</h3>
-            <ul className="mt-3 space-y-2 text-white/85">
-              <li>• Lighthouse Best-Practices score</li>
-              <li>• Security/HTTPS, deprecated APIs, console errors</li>
-              <li>• Redirect chains, broken assets, duplicates</li>
-            </ul>
-          </div>
-
-          {/* Accessibility */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-lg font-semibold text-white">Accessibility</h3>
-            <ul className="mt-3 space-y-2 text-white/85">
-              <li>• Lighthouse Accessibility score</li>
-              <li>• Alt text, contrast, headings, focus states</li>
-            </ul>
-          </div>
-
-          {/* AI Readiness */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-lg font-semibold text-white">AI search readiness</h3>
-            <ul className="mt-3 space-y-2 text-white/85">
-              <li>• JSON-LD audit: Organization, LocalBusiness, Service schema</li>
-              <li>• FAQ & Service schema coverage</li>
-              <li>• Natural-language metas for AI Overviews</li>
-            </ul>
-          </div>
-
-          {/* Local Rankings */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-lg font-semibold text-white">Local rankings & GBP</h3>
-            <ul className="mt-3 space-y-2 text-white/85">
-              <li>• Local Pack / Maps visibility by keyword</li>
-              <li>• Competitor snapshot & ranking gaps</li>
-              <li>• GBP: categories, photos, reviews, NAP alignment</li>
-            </ul>
-          </div>
-
-          {/* Competitor Snapshot */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-lg font-semibold text-white">Competitive snapshot</h3>
-            <ul className="mt-3 space-y-2 text-white/85">
-              <li>• Top competitor analysis</li>
-              <li>• Gaps in visibility and messaging</li>
-            </ul>
-          </div>
-
-          {/* Action Plan */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-lg font-semibold text-white">Prioritised action plan</h3>
-            <ul className="mt-3 space-y-2 text-white/85">
-              <li>• Top 5 quick wins to boost visibility</li>
-              <li>• Sequenced, ticket-ready dev fixes</li>
-            </ul>
-          </div>
+          {[
+            {
+              title: "Performance (mobile-first)",
+              items: [
+                "Lighthouse Performance score (mobile)",
+                "Core Web Vitals: LCP, CLS, TBT, FCP",
+                "Bottlenecks: JavaScript, CSS, images, caching",
+              ]
+            },
+            {
+              title: "SEO signals",
+              items: [
+                "Lighthouse SEO score",
+                "Titles, meta descriptions & canonicals",
+                "Crawlability & indexability checks"
+              ]
+            },
+            {
+              title: "Technical best practices",
+              items: [
+                "Lighthouse Best-Practices score",
+                "Security/HTTPS, deprecated APIs, console errors",
+                "Redirect chains, broken assets, duplicates",
+              ]
+            },
+            {
+              title: "Accessibility",
+              items: [
+                "Lighthouse Accessibility score",
+                "Alt text, contrast, headings, focus states",
+              ]
+            },
+            {
+              title: "AI search readiness",
+              items: [
+                "JSON-LD audit: Organization, LocalBusiness, Service schema",
+                "FAQ & Service schema coverage",
+                "Natural-language metas for AI Overviews",
+              ]
+            },
+            {
+              title: "Local rankings & GBP",
+              items: [
+                "Local Pack / Maps visibility by keyword",
+                "Competitor snapshot & ranking gaps",
+                "GBP: categories, photos, reviews, NAP alignment",
+              ]
+            },
+            {
+              title: "Competitive snapshot",
+              items: [
+                "Top competitor analysis",
+                "Gaps in visibility and messaging",
+              ]
+            },
+            {
+              title: "Prioritised action plan",
+              items: [
+                "Top 5 quick wins to boost visibility",
+                "Sequenced, ticket-ready dev fixes",
+              ]
+            }
+          ].map((section, i) => (
+            <motion.div
+              key={i}
+              variants={card}
+              className="rounded-2xl border border-white/10 bg-white/5 p-6"
+            >
+              <h3 className="text-lg font-semibold text-white">{section.title}</h3>
+              <ul className="mt-3 space-y-2 text-white/85">
+                {section.items.map((it, idx) => (
+                  <li key={idx}>• {it}</li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
 
         </div>
-      </section>
+      </motion.section>
 
-      {/* ---------------------------------------------------------
-            DELIVERY SECTION — Clean, simple, no call
-      ---------------------------------------------------------- */}
-      <section className="container py-12">
+      {/* DELIVERY SECTION */}
+      <motion.section
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+        className="container py-12"
+      >
         <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">How it's delivered</h2>
 
         <ul className="mt-4 grid gap-2 text-white/85 md:grid-cols-2">
@@ -164,29 +181,30 @@ export default function AuditPage() {
         </ul>
 
         <div className="mt-6 flex flex-wrap gap-3">
-          <a
+          <motion.a
+            variants={fadeIn}
             href="/api/checkout?p=audit&discount=BOSS"
             className="inline-flex items-center rounded-2xl border border-white/20 px-6 py-3 font-semibold text-white hover:bg-white/10"
           >
             Start Audit — $99 (Code: BOSS)
-          </a>
+          </motion.a>
 
-          <a
+          <motion.a
+            variants={fadeIn}
             href="tel:+64212968586"
             className="inline-flex items-center rounded-2xl border border-white/20 px-6 py-3 font-semibold text-white/85 hover:text-white hover:bg-white/10"
           >
             Call 021 296 8586
-          </a>
+          </motion.a>
 
-          {/* Sample audit modal */}
-          <div ref={auditPopupRef}>
-            <AuditPopup 
+          <motion.div variants={fadeIn} ref={auditPopupRef}>
+            <AuditPopup
               url="/sample-audit.json"
               buttonLabel="View Sample Audit"
             />
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
     </main>
   );
