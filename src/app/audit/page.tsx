@@ -7,7 +7,7 @@ import AuditPopup from '@/components/AuditPopup';
 export default function AuditPage() {
   const auditPopupRef = useRef<HTMLDivElement>(null);
 
-  // Handle #sample-audit hash (opens modal automatically)
+  // Auto-open modal when #sample-audit is triggered
   useEffect(() => {
     const onHash = () => {
       if (typeof window === 'undefined') return;
@@ -25,11 +25,11 @@ export default function AuditPage() {
   return (
     <main>
 
-      {/* Anchor used by CTA to auto-open sample modal */}
+      {/* Invisible anchor for sample audit modal trigger */}
       <div id="sample-audit" className="hidden" />
 
       {/* ---------------------------------------------------------
-            HERO SECTION — Updated with Steve avatar & $99 offer
+            HERO SECTION — Steve avatar + Tradie messaging
       ---------------------------------------------------------- */}
       <HeroLeft
         imageSrc="/images/audit-hero.jpg"
@@ -50,21 +50,21 @@ export default function AuditPage() {
       />
 
       {/* ---------------------------------------------------------
-             WHY NOW — Urgency section
+             WHY NOW SECTION — Urgency & competitive pressure
       ---------------------------------------------------------- */}
       <section className="container py-12">
         <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">Why now?</h2>
 
         <p className="mt-4 text-white/85 max-w-3xl">
-          When January hits, search behaviour resets. Competitors who optimise first
-          gain top visibility for months.
+          When January hits, search behaviour resets. Competitors who optimise
+          first gain top visibility for months.
           <br /><br />
           This audit shows you exactly what’s broken — before it costs you real tradie jobs.
         </p>
       </section>
 
       {/* ---------------------------------------------------------
-            WHAT'S INCLUDED — Feature grid (kept same styling)
+            WHAT'S INCLUDED — Your premium grid system
       ---------------------------------------------------------- */}
       <section className="container py-12">
         <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">What's included</h2>
@@ -72,7 +72,7 @@ export default function AuditPage() {
         <div className="mt-6 grid gap-4 md:grid-cols-2">
 
           {/* Performance */}
-          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <h3 className="text-lg font-semibold text-white">Performance (mobile-first)</h3>
             <ul className="mt-3 space-y-2 text-white/85">
               <li>• Lighthouse Performance score (mobile)</li>
@@ -82,7 +82,7 @@ export default function AuditPage() {
           </div>
 
           {/* SEO */}
-          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <h3 className="text-lg font-semibold text-white">SEO signals</h3>
             <ul className="mt-3 space-y-2 text-white/85">
               <li>• Lighthouse SEO score</li>
@@ -92,7 +92,7 @@ export default function AuditPage() {
           </div>
 
           {/* Technical */}
-          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <h3 className="text-lg font-semibold text-white">Technical best practices</h3>
             <ul className="mt-3 space-y-2 text-white/85">
               <li>• Lighthouse Best-Practices score</li>
@@ -102,7 +102,7 @@ export default function AuditPage() {
           </div>
 
           {/* Accessibility */}
-          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <h3 className="text-lg font-semibold text-white">Accessibility</h3>
             <ul className="mt-3 space-y-2 text-white/85">
               <li>• Lighthouse Accessibility score</li>
@@ -110,8 +110,8 @@ export default function AuditPage() {
             </ul>
           </div>
 
-          {/* AI */}
-          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
+          {/* AI Readiness */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <h3 className="text-lg font-semibold text-white">AI search readiness</h3>
             <ul className="mt-3 space-y-2 text-white/85">
               <li>• JSON-LD audit: Organization, LocalBusiness, Service schema</li>
@@ -120,8 +120,8 @@ export default function AuditPage() {
             </ul>
           </div>
 
-          {/* Local & GBP */}
-          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
+          {/* Local Rankings */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <h3 className="text-lg font-semibold text-white">Local rankings & GBP</h3>
             <ul className="mt-3 space-y-2 text-white/85">
               <li>• Local Pack / Maps visibility by keyword</li>
@@ -130,8 +130,8 @@ export default function AuditPage() {
             </ul>
           </div>
 
-          {/* Competitive */}
-          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
+          {/* Competitor Snapshot */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <h3 className="text-lg font-semibold text-white">Competitive snapshot</h3>
             <ul className="mt-3 space-y-2 text-white/85">
               <li>• Top competitor analysis</li>
@@ -139,8 +139,8 @@ export default function AuditPage() {
             </ul>
           </div>
 
-          {/* Action plan */}
-          <div className="rounded-2xl border border-white/10 p-6 bg-white/5">
+          {/* Action Plan */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <h3 className="text-lg font-semibold text-white">Prioritised action plan</h3>
             <ul className="mt-3 space-y-2 text-white/85">
               <li>• Top 5 quick wins to boost visibility</li>
@@ -152,7 +152,7 @@ export default function AuditPage() {
       </section>
 
       {/* ---------------------------------------------------------
-            DELIVERY SECTION — With 15m call removed
+            DELIVERY SECTION — Clean, simple, no call
       ---------------------------------------------------------- */}
       <section className="container py-12">
         <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">How it's delivered</h2>
@@ -166,13 +166,14 @@ export default function AuditPage() {
         <div className="mt-6 flex flex-wrap gap-3">
           <a
             href="/api/checkout?p=audit&discount=BOSS"
-            className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10"
+            className="inline-flex items-center rounded-2xl border border-white/20 px-6 py-3 font-semibold text-white hover:bg-white/10"
           >
             Start Audit — $99 (Code: BOSS)
           </a>
+
           <a
             href="tel:+64212968586"
-            className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white/85 hover:text-white hover:bg-white/10"
+            className="inline-flex items-center rounded-2xl border border-white/20 px-6 py-3 font-semibold text-white/85 hover:text-white hover:bg-white/10"
           >
             Call 021 296 8586
           </a>
@@ -180,8 +181,8 @@ export default function AuditPage() {
           {/* Sample audit modal */}
           <div ref={auditPopupRef}>
             <AuditPopup 
-              url="/sample-audit.json" 
-              buttonLabel="View Sample Audit" 
+              url="/sample-audit.json"
+              buttonLabel="View Sample Audit"
             />
           </div>
         </div>
