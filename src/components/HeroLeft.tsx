@@ -1,6 +1,4 @@
 import Image from 'next/image'
-import { motion } from 'framer-motion'
-import { avatarPop } from '@/lib/animations'
 
 type CTA = { label: string; href: string }
 
@@ -81,14 +79,9 @@ export default function HeroLeft({
               </div>
             )}
 
-            {/* Steve avatar bubble (optional) */}
+            {/* Steve avatar bubble (optional, static) */}
             {avatarVideoSrc && (
-              <motion.div
-                variants={avatarPop}
-                initial="hidden"
-                animate="show"
-                className="absolute -bottom-8 -right-8 w-24 h-24 rounded-full overflow-hidden border border-white/20 shadow-xl backdrop-blur bg-black/30 z-30"
-              >
+              <div className="absolute -bottom-8 -right-8 w-24 h-24 rounded-full overflow-hidden border border-white/20 shadow-xl backdrop-blur bg-black/30 z-30">
                 <video
                   src={avatarVideoSrc}
                   autoPlay
@@ -97,7 +90,7 @@ export default function HeroLeft({
                   playsInline
                   className="w-full h-full object-cover"
                 />
-              </motion.div>
+              </div>
             )}
           </div>
         </div>
