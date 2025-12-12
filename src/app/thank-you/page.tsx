@@ -11,12 +11,12 @@ export default function Page() {
         </p>
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link
-            href="/gbp"
+          <a
+            href="/api/checkout?p=gbp"
             className="rounded-2xl border border-white/70 text-white/95 px-6 py-3 font-semibold backdrop-blur-[1px] hover:border-brand-accent hover:text-white transition"
           >
-            Next Step: GBP Optimisation (Fastest ROI)
-          </Link>
+            Upgrade Now: GBP Optimisation (Fastest ROI)
+          </a>
 
           <a
             href="tel:+64212968586"
@@ -25,6 +25,10 @@ export default function Page() {
             Call 021 296 8586
           </a>
         </div>
+
+        <p className="mt-4 text-white/60 text-sm">
+          Most tradies see the fastest visibility gains from Google Business Profile before website upgrades.
+        </p>
       </div>
 
       {/* Divider */}
@@ -66,9 +70,9 @@ export default function Page() {
             Want the fastest wins first?
           </h2>
           <p className="mt-3 text-white/80 text-lg">
-            The audit tells you what’s broken. The fastest way to convert that into real enquiries is usually your
-            <span className="text-white font-semibold"> Google Business Profile</span>.
-            That’s where tradies win Maps/Local Pack visibility quickly.
+            The audit tells you what’s broken. The fastest way to turn that into real enquiries is usually your{" "}
+            <span className="text-white font-semibold">Google Business Profile</span> — that’s where you win Maps/Local Pack
+            visibility quickly.
           </p>
 
           <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -86,23 +90,24 @@ export default function Page() {
             <div className="rounded-2xl border border-white/10 bg-black/20 p-6">
               <h3 className="text-lg font-semibold text-white">Recommended sequence</h3>
               <ol className="mt-3 space-y-2 text-white/80 list-decimal list-inside">
-                <li>Audit (you’ve done this)</li>
+                <li>Audit (done)</li>
                 <li>GBP Optimisation (fast visibility)</li>
                 <li>AI Visibility Website (high conversion)</li>
               </ol>
               <p className="mt-4 text-white/70">
-                If you want a head start for next year, this is the order that compounds the fastest.
+                If you want a head start for next year, this order compounds the fastest.
               </p>
             </div>
           </div>
 
           <div className="mt-7 flex flex-wrap gap-3">
-            <Link
-              href="/gbp"
+            <a
+              href="/api/checkout?p=gbp"
               className="rounded-2xl border border-white/70 text-white/95 px-6 py-3 font-semibold backdrop-blur-[1px] hover:border-brand-accent hover:text-white transition"
             >
               Upgrade Now: GBP Optimisation
-            </Link>
+            </a>
+
             <Link
               href="/ai-visibility"
               className="rounded-2xl border border-white/20 text-white/85 px-6 py-3 font-semibold hover:bg-white/10 hover:text-white transition"
@@ -129,3 +134,4 @@ export default function Page() {
     </main>
   );
 }
+
