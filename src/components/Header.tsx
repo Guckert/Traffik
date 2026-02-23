@@ -237,7 +237,7 @@ export default function Header() {
         </div>
       )}
     </div>
-  );
+
 }const nav = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
