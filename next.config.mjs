@@ -6,8 +6,8 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
-
-  // 1) Force apex -> www with a *permanent* redirect (308)
+  
+  // Redirects: 1) Apex->www, 2) Old audit page->new AI agents page
   async redirects() {
     return [
       {
@@ -16,17 +16,29 @@ const nextConfig = {
         destination: 'https://www.traffik.nz/:path*',
         permanent: true, // 308 (better SEO signal than 307)
       },
+      {
+        source: '/audit',
+        destination: '/ai-agents',
+        permanent: true, // 301 redirect for SEO juice
+      },
+      {
+        source: '/audit/:path*', // catches any old audit sub-pages
+        destination: '/ai-agents',
+        permanent: true,
+      },
     ];
   },
-
-  // 2) Give static brand assets long-lived, immutable caching
+  
+  // Give static brand assets long-lived, immutable caching
   async headers() {
     return [
       {
-        source:
-          '/:file(logo\\.png|logo-112\\.png|favicon-16x16\\.png|favicon-32x32\\.png|apple-touch-icon\\.png|android-chrome-192x192\\.png)',
+        source: '/:file(logo\\.png|logo-112\\.png|favicon-16x16\\.png|favicon-32x32\\.png|apple-touch-icon\\.png|android-chrome-192x192\\.png)',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
         ],
       },
     ];
@@ -34,4 +46,3 @@ const nextConfig = {
 };
 
 export default nextConfig;
-
