@@ -238,4 +238,13 @@ export default function Header() {
       )}
     </div>
   );
-}
+}const nav = [
+  { label: 'Home', href: '/' },
+  { label: 'Services', href: '/services' },
+  { label: 'AI Agents', href: '/ai-agents' }, // CHANGED FROM 'Audit'
+  { label: 'GBP', href: '/gbp' },
+  { label: 'AI Visibility', href: '/ai-visibility' },
+  { label: 'Service Area', href: '/service-area' },
+  { label: 'Contact', href: '/contact' },
+];
+
