@@ -6,7 +6,6 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
-  
   // Redirects: 1) Apex->www, 2) Old audit page->new AI agents page
   async redirects() {
     return [
@@ -14,21 +13,20 @@ const nextConfig = {
         source: '/:path*',
         has: [{ type: 'host', value: 'traffik.nz' }],
         destination: 'https://www.traffik.nz/:path*',
-        permanent: true, // 308 (better SEO signal than 307)
+        permanent: true,
       },
       {
         source: '/audit',
         destination: '/ai-agents',
-        permanent: true, // 301 redirect for SEO juice
+        permanent: true,
       },
       {
-        source: '/audit/:path*', // catches any old audit sub-pages
+        source: '/audit/:path*',
         destination: '/ai-agents',
         permanent: true,
       },
     ];
   },
-  
   // Give static brand assets long-lived, immutable caching
   async headers() {
     return [
