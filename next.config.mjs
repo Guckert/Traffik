@@ -12,7 +12,7 @@ const nextConfig = {
     return [
       {
         source: '/:path*',
-        has: [{ type: 'host', value: 'traffik.nz' }], // apex
+        has: [{ type: 'host', value: 'traffik.nz' }],
         destination: 'https://www.traffik.nz/:path*',
         permanent: true, // 308 (better SEO signal than 307)
       },
