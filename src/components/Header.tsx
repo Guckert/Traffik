@@ -34,7 +34,7 @@ const CloseIcon = (props: any) => (
 const nav = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
-  { label: 'AI Agents', href: '/ai-agents' }, // CHANGED FROM 'Audit'
+  { label: 'AI Agents', href: '/ai-agents' },
   { label: 'GBP', href: '/gbp' },
   { label: 'AI Visibility', href: '/ai-visibility' },
   { label: 'Service Area', href: '/service-area' },
@@ -54,34 +54,25 @@ export default function Header() {
   // lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
+    return () => { document.body.style.overflow = ''; };
   }, [open]);
 
   // close drawer on route change
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
+  useEffect(() => { setOpen(false); }, [pathname]);
 
-  // Esc to close + basic focus trap when open
+  // Esc to close + basic focus trap
   useEffect(() => {
     if (!open) return;
     const el = panelRef.current;
-    const getFocusables = () =>
-      el?.querySelectorAll<HTMLElement>(
-        'a,button,textarea,input,select,summary,[tabindex]:not([tabindex="-1"])'
-      ) ?? ([] as unknown as NodeListOf<HTMLElement>);
+    const getFocusables = () => el?.querySelectorAll<HTMLElement>(
+      'a,button,textarea,input,select,summary,[tabindex]:not([tabindex="-1"])'
+    ) ?? ([] as unknown as NodeListOf<HTMLElement>);
 
-    // send focus to first focusable
     const focusables = getFocusables();
     focusables[0]?.focus();
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setOpen(false);
-        return;
-      }
+      if (e.key === 'Escape') { setOpen(false); return; }
       if (e.key !== 'Tab') return;
       const items = getFocusables();
       if (!items.length) return;
@@ -91,17 +82,14 @@ export default function Header() {
 
       if (e.shiftKey) {
         if (active === first || !el?.contains(active)) {
-          e.preventDefault();
-          last.focus();
+          e.preventDefault(); last.focus();
         }
       } else {
         if (active === last || !el?.contains(active)) {
-          e.preventDefault();
-          first.focus();
+          e.preventDefault(); first.focus();
         }
       }
     };
-
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
@@ -109,7 +97,7 @@ export default function Header() {
   return (
     <div className="sticky top-0 z-50 border-b border-white/10 bg-black lg:bg-black/60 lg:backdrop-blur-md lg:supports-[backdrop-filter]:bg-black/60">
       <div className="container mx-auto flex items-center justify-between gap-4 px-4 py-3">
-        {/* Brand block */}
+        {/* Brand */}
         <Link href="/" className="group flex items-baseline gap-2">
           <span className="text-xl font-extrabold tracking-wide text-brand-accent group-hover:opacity-90">TRAFFIK</span>
           <span className="hidden text-xs font-semibold uppercase text-white/70 sm:block">AI WEB OPTIMISATION</span>
@@ -119,8 +107,8 @@ export default function Header() {
         {/* Desktop nav */}
         <nav className="hidden items-center gap-6 lg:flex">
           {nav.map((item) => (
-            <Link
-              key={item.href}
+            <Link 
+              key={item.href} 
               href={item.href}
               aria-current={isActive(pathname, item.href) ? 'page' : undefined}
               className={[
@@ -133,18 +121,97 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Actions */}
+        {/* Desktop Actions */}
         <div className="hidden items-center gap-2 lg:flex">
-          <a
-            href="tel:+64212968586"
+          <a 
+            href="tel:+64212968586" 
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-sm text-white/90 hover:bg-white/10"
           >
             <PhoneIcon className="h-4 w-4" />
             021 296 8586
           </a>
-          <a
-            href="mailto:hello@traffik.nz"
+          <a 
+            href="mailto:hello@traffik.nz" 
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-sm text-white/90 hover:bg-white/10"
           >
             <MailIcon className="h-4 w-4" />
-|
+            hello@traffik.nz
+          </a>
+        </div>
+
+        {/* Mobile hamburger */}
+        <button
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          aria-label="Open navigation"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/20 text-white hover:bg-white/10 lg:hidden"
+          onClick={() => setOpen(true)}
+        >
+          <MenuIcon className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Mobile drawer */}
+      {open && (
+        <>
+          <div 
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden" 
+            onClick={() => setOpen(false)} 
+          />
+          <div
+            ref={panelRef}
+            id="mobile-menu"
+            className="fixed inset-x-4 top-4 z-50 rounded-2xl border border-white/10 bg-neutral-900 p-6 shadow-2xl lg:hidden"
+          >
+            <div className="mb-6 flex items-center justify-between">
+              <span className="text-lg font-bold text-white">Menu</span>
+              <button
+                aria-label="Close navigation"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/20 text-white hover:bg-white/10"
+                onClick={() => setOpen(false)}
+              >
+                <CloseIcon className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <nav className="flex flex-col gap-2">
+              {nav.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className={[
+                    'rounded-lg px-4 py-3 text-base',
+                    isActive(pathname, item.href) 
+                      ? 'bg-white/10 font-semibold text-white' 
+                      : 'text-white/80 hover:bg-white/5 hover:text-white'
+                  ].join(' ')}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+            
+            <div className="mt-6 flex flex-col gap-3 border-t border-white/10 pt-6">
+              <a 
+                href="tel:+64212968586" 
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 px-4 py-3 text-sm text-white/90 hover:bg-white/10"
+              >
+                <PhoneIcon className="h-4 w-4" />
+                021 296 8586
+              </a>
+              <a 
+                href="mailto:hello@traffik.nz" 
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 px-4 py-3 text-sm text-white/90 hover:bg-white/10"
+              >
+                <MailIcon className="h-4 w-4" />
+                hello@traffik.nz
+              </a>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
