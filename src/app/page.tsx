@@ -9,13 +9,13 @@ export default function Home() {
         title="Get Found. Get Calls. Get Work."
         subtitle="AI website optimisation for NZ tradies — faster sites, stronger Google rankings, and steady local leads."
         ctas={[
-          { label: 'Get Audit — $159', href: '/audit' },
+          { label: 'AI Agents (Jess AI)', href: '/ai-agents' },
           { label: 'Get GBP — $350', href: '/gbp' },
           { label: 'AI Visibility System — $3,450/mo', href: '/ai-visibility' },
         ]}
       />
 
-      {/* Feature highlights (keep your original 3, lightly reworded) */}
+      {/* Feature highlights */}
       <section className="border-t border-white/10">
         <div className="container grid gap-4 py-10 md:grid-cols-3">
           {[
@@ -43,24 +43,36 @@ export default function Home() {
       {/* Product cards */}
       <section className="container py-12">
         <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">Choose a starting point</h2>
+
         <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {/* Audit */}
+          {/* AI Agents */}
           <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-lg font-semibold text-white">AI Website Audit</h3>
-            <p className="mt-2 text-white/85">30-point review of speed, SEO and Google readiness with prioritised fixes.</p>
-            <p className="mt-4 font-semibold text-white">$159</p>
+            <h3 className="text-lg font-semibold text-white">AI Agents (Jess AI)</h3>
+            <p className="mt-2 text-white/85">
+              Your 24/7 AI receptionist: answers calls, books appointments, sends reminders and upsells services.
+              Trained on your business and data.
+            </p>
+            <p className="mt-4 font-semibold text-white">$1,500–$3,000 setup • $169/wk</p>
             <a
-              href="/audit"
+              href="/ai-agents"
               className="mt-4 inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10"
             >
-              Get Audit — $159
+              View Jess AI
+            </a>
+            <a
+              href="tel:+6435654900"
+              className="mt-3 inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white/85 hover:text-white hover:bg-white/10"
+            >
+              Call Demo: 03 565 4900
             </a>
           </div>
 
           {/* GBP */}
           <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <h3 className="text-lg font-semibold text-white">Google Business Profile Optimisation</h3>
-            <p className="mt-2 text-white/85">Map-pack tuning: categories, services, posts, photos and review strategy.</p>
+            <p className="mt-2 text-white/85">
+              Map-pack tuning: categories, services, posts, photos and review strategy.
+            </p>
             <p className="mt-4 font-semibold text-white">$350</p>
             <a
               href="/gbp"
@@ -73,7 +85,9 @@ export default function Home() {
           {/* AI Visibility System */}
           <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <h3 className="text-lg font-semibold text-white">AI Visibility System</h3>
-            <p className="mt-2 text-white/85">Done-for-you website, SEO and GBP management powered by AI — built to keep the phone ringing.</p>
+            <p className="mt-2 text-white/85">
+              Done-for-you website, SEO and GBP management powered by AI — built to keep the phone ringing.
+            </p>
             <p className="mt-4 font-semibold text-white">$3,450/mo • 12-month plan</p>
             <a
               href="/ai-visibility"
@@ -95,15 +109,23 @@ export default function Home() {
             <li>• Website + GBP + SEO covered in one place</li>
             <li>• AI keeps content aligned with local demand</li>
           </ul>
+
           <p className="mt-6 italic text-white/70">
             “It’s like having your own marketing department — without hiring anyone.”
           </p>
+
           <div className="mt-6 flex flex-wrap gap-3">
             <a
-              href="/audit"
+              href="/ai-agents"
               className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10"
             >
-              Start with an Audit — $159
+              See Jess AI
+            </a>
+            <a
+              href="tel:+6435654900"
+              className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white/85 hover:text-white hover:bg-white/10"
+            >
+              Call Jess AI Demo
             </a>
             <a
               href="/ai-visibility"
