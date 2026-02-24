@@ -1,141 +1,130 @@
 import HeroLeft from '@/components/HeroLeft';
+import Link from 'next/link';
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <main>
+    <>
+      {/* HERO (Jess AI first) */}
       <HeroLeft
-        imageSrc="/images/home-hero.jpg"
-        imageAlt="Business owner outside storefront at dusk"
-        title="Get Found. Get Calls. Get Work."
-        subtitle="AI website optimisation for NZ tradies — faster sites, stronger Google rankings, and steady local leads."
+        imageSrc="/images/home-hero.jpg" // Option: change to "/images/jess-hero.jpg"
+        imageAlt="Business phone call answered instantly by AI receptionist"
+        title="Never Miss a Call Again."
+        subtitle="Jess AI answers calls 24/7, books appointments, sends reminders, and upsells your services — trained on your business and data."
         ctas={[
-          { label: 'AI Agents (Jess AI)', href: '/ai-agents' },
-          { label: 'Get GBP — $350', href: '/gbp' },
-          { label: 'AI Visibility System — $3,450/mo', href: '/ai-visibility' },
+          { label: 'View Jess AI', href: '/ai-agents' },
+          { label: 'Call Demo — 03 565 4900', href: 'tel:035654900' },
+          { label: 'GBP Optimisation — $350', href: '/gbp' },
         ]}
       />
 
-      {/* Feature highlights */}
-      <section className="border-t border-white/10">
-        <div className="container grid gap-4 py-10 md:grid-cols-3">
-          {[
-            {
-              t: 'AI SEO / AEO',
-              d: 'Optimised for Google AI Overviews, ChatGPT-style search and voice assistants.',
-            },
-            {
-              t: 'Core Web Vitals',
-              d: 'Lift LCP, INP and CLS with code cleanup, caching and asset optimisation.',
-            },
-            {
-              t: 'Local / GBP',
-              d: 'Categories, services, photos and reviews tuned to turn views into calls.',
-            },
-          ].map((c) => (
-            <div key={c.t} className="rounded-xl border border-white/10 bg-white/5 p-5">
-              <div className="font-semibold text-white">{c.t}</div>
-              <p className="mt-2 text-white/75">{c.d}</p>
+      {/* 3 FEATURE CARDS (Jess AI relevance) */}
+      <section className="border-t border-white/10 bg-black">
+        <div className="container mx-auto px-4 py-10">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+              <div className="text-sm font-semibold text-white">AI Agents (Jess AI)</div>
+              <p className="mt-2 text-sm text-white/70">
+                24/7 call answering, appointment booking, reminders and follow-ups —
+                with your services + pricing baked in.
+              </p>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Product cards */}
-      <section className="container py-12">
-        <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">Choose a starting point</h2>
+            {/* REPLACED: Core Web Vitals */}
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+              <div className="text-sm font-semibold text-white">Bookings & Reminders</div>
+              <p className="mt-2 text-sm text-white/70">
+                Jess AI captures every lead, books instantly, and reduces no-shows with automated reminders —
+                so your diary stays full.
+              </p>
+            </div>
 
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {/* AI Agents */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-lg font-semibold text-white">AI Agents (Jess AI)</h3>
-            <p className="mt-2 text-white/85">
-              Your 24/7 AI receptionist: answers calls, books appointments, sends reminders and upsells services.
-              Trained on your business and data.
-            </p>
-            <p className="mt-4 font-semibold text-white">$1,500–$3,000 setup • $169/wk</p>
-            <a
-              href="/ai-agents"
-              className="mt-4 inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10"
-            >
-              View Jess AI
-            </a>
-            <a
-              href="tel:+6435654900"
-              className="mt-3 inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white/85 hover:text-white hover:bg-white/10"
-            >
-              Call Demo: 03 565 4900
-            </a>
-          </div>
-
-          {/* GBP */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-lg font-semibold text-white">Google Business Profile Optimisation</h3>
-            <p className="mt-2 text-white/85">
-              Map-pack tuning: categories, services, posts, photos and review strategy.
-            </p>
-            <p className="mt-4 font-semibold text-white">$350</p>
-            <a
-              href="/gbp"
-              className="mt-4 inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10"
-            >
-              Get GBP — $350
-            </a>
-          </div>
-
-          {/* AI Visibility System */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-lg font-semibold text-white">AI Visibility System</h3>
-            <p className="mt-2 text-white/85">
-              Done-for-you website, SEO and GBP management powered by AI — built to keep the phone ringing.
-            </p>
-            <p className="mt-4 font-semibold text-white">$3,450/mo • 12-month plan</p>
-            <a
-              href="/ai-visibility"
-              className="mt-4 inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10"
-            >
-              Learn More
-            </a>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+              <div className="text-sm font-semibold text-white">Local / GBP</div>
+              <p className="mt-2 text-sm text-white/70">
+                Categories, services, photos and reviews tuned to convert profile views into calls and bookings.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Why it works for trades */}
-      <section className="container pb-12">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-          <h2 className="text-2xl md:text-3xl font-semibold text-brand-accent">Why tradies choose Traffik</h2>
-          <ul className="mt-4 grid gap-2 text-white/85 md:grid-cols-2">
-            <li>• Built around NZ service areas (Google Maps + suburbs)</li>
-            <li>• Simple CTAs to drive calls, quotes and bookings</li>
-            <li>• Website + GBP + SEO covered in one place</li>
-            <li>• AI keeps content aligned with local demand</li>
-          </ul>
+      {/* STARTING POINT CARDS */}
+      <section className="bg-black">
+        <div className="container mx-auto px-4 py-14">
+          <h2 className="text-lg font-semibold text-brand-accent">Choose a starting point</h2>
 
-          <p className="mt-6 italic text-white/70">
-            “It’s like having your own marketing department — without hiring anyone.”
-          </p>
+          <div className="mt-6 grid gap-6 md:grid-cols-3">
+            {/* Jess AI */}
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              <div className="text-sm font-semibold text-white">AI Agents (Jess AI)</div>
+              <p className="mt-2 text-sm text-white/70">
+                Your 24/7 AI receptionist: answers calls, books appointments, sends reminders and follows up,
+                and can upsell services — trained on your business and data.
+              </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href="/ai-agents"
-              className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white hover:bg-white/10"
-            >
-              See Jess AI
-            </a>
-            <a
-              href="tel:+6435654900"
-              className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white/85 hover:text-white hover:bg-white/10"
-            >
-              Call Jess AI Demo
-            </a>
-            <a
-              href="/ai-visibility"
-              className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 font-medium text-white/85 hover:text-white hover:bg-white/10"
-            >
-              See the AI Visibility System
-            </a>
+              <div className="mt-4 text-sm text-white/80">
+                <div><span className="font-semibold">$1,500–$3,000</span> setup (inc GST)</div>
+                <div><span className="font-semibold">$169/week</span> ongoing (inc GST)</div>
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  href="/ai-agents"
+                  className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/15"
+                >
+                  View Jess AI
+                </Link>
+                <a
+                  href="tel:035654900"
+                  className="inline-flex items-center justify-center rounded-full border border-white/20 px-4 py-2 text-sm text-white/90 hover:bg-white/10"
+                >
+                  Call Demo: 03 565 4900
+                </a>
+              </div>
+            </div>
+
+            {/* GBP */}
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              <div className="text-sm font-semibold text-white">Google Business Profile Optimisation</div>
+              <p className="mt-2 text-sm text-white/70">
+                Map-pack tuning: categories, services, media and review strategy built to drive calls.
+              </p>
+              <div className="mt-4 text-sm text-white/80">
+                <span className="font-semibold">$350</span>
+              </div>
+
+              <div className="mt-5">
+                <Link
+                  href="/gbp"
+                  className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/15"
+                >
+                  Get GBP — $350
+                </Link>
+              </div>
+            </div>
+
+            {/* AIV */}
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              <div className="text-sm font-semibold text-white">AI Visibility System</div>
+              <p className="mt-2 text-sm text-white/70">
+                Done-for-you website, SEO and GBP management powered by AI — built to keep the phone ringing.
+              </p>
+              <div className="mt-4 text-sm text-white/80">
+                <span className="font-semibold">$3,450</span> / 12-month plan
+              </div>
+
+              <div className="mt-5">
+                <Link
+                  href="/ai-visibility"
+                  className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/15"
+                >
+                  Learn More
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
-    </main>
+    </>
   );
 }
