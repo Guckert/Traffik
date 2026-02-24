@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 const PhoneIcon = (props: any) => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
     <path
-      d="M6.7 2.8a2 2 0 0 1 2.3 1.1l1.1 2.6a2 2 0 0 1-.5 2.2l-1 1a14.5 14.5 0 0 0 6.7 6.7l1-1a2 2 0 0 1 2.2-.5l2.6 1.1a2 2 0 0 1 1.1 2.3l-.4 1.4a2.5 2.5 0 0 1-2.4 1.8A19.5 19.5 0 0 1 3.7 5.2 2.5 2.5 0 0 1 5.5 2.8z"
+      d="M6.7 2.8a2 2 0 0 1 2.3 1.1l1.1 2.6a2 2 0 0 1-.5 2.2l-1 1a14.5 14.5 0 0 0 6.7 6.7l1-1a2 2 0 0 1 2.2-.5l2.6 1.1a2 2 0 0 1 1.1 2.3l-.4 1.4a2.5 2.5 0 0 1-2.4 1.8A19.5 19.5 0 0 1 3.7 5.2 2.5 2 0 0 1 5.5 2.8z"
       stroke="currentColor"
       strokeWidth="1.6"
     />
@@ -52,7 +52,7 @@ const CloseIcon = (props: any) => (
 const nav = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
-  { label: 'AI Agents', href: '/ai-agents' }, // ✅ new
+  { label: 'AI Agents', href: '/ai-agents' },
   { label: 'GBP', href: '/gbp' },
   { label: 'AI Visibility', href: '/ai-visibility' },
   { label: 'Service Area', href: '/service-area' },
@@ -142,21 +142,30 @@ export default function SiteHeader() {
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-6 lg:flex">
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={isActive(pathname, item.href) ? 'page' : undefined}
-              className={[
-                'text-sm transition-colors',
-                isActive(pathname, item.href)
-                  ? 'text-white'
-                  : 'text-white/70 hover:text-white',
-              ].join(' ')}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {nav.map((item) => {
+            const active = isActive(pathname, item.href);
+            const highlight = item.href === '/ai-agents';
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? 'page' : undefined}
+                className={[
+                  // base
+                  'text-sm transition-colors',
+                  // highlight AI Agents as a pill
+                  highlight
+                    ? 'rounded-full border border-brand-accent/40 bg-brand-accent/10 px-3 py-1 text-brand-accent hover:bg-brand-accent/15'
+                    : '',
+                  // active vs inactive
+                  active ? (highlight ? '' : 'text-white') : 'text-white/70 hover:text-white',
+                ].join(' ')}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Desktop Actions */}
@@ -213,21 +222,29 @@ export default function SiteHeader() {
             </div>
 
             <nav className="flex flex-col gap-2">
-              {nav.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className={[
-                    'rounded-lg px-4 py-3 text-base',
-                    isActive(pathname, item.href)
-                      ? 'bg-white/10 font-semibold text-white'
-                      : 'text-white/80 hover:bg-white/5 hover:text-white',
-                  ].join(' ')}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {nav.map((item) => {
+                const active = isActive(pathname, item.href);
+                const highlight = item.href === '/ai-agents';
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className={[
+                      'rounded-lg px-4 py-3 text-base',
+                      highlight
+                        ? 'border border-brand-accent/40 bg-brand-accent/10 text-brand-accent hover:bg-brand-accent/15'
+                        : '',
+                      active
+                        ? 'bg-white/10 font-semibold text-white'
+                        : 'text-white/80 hover:bg-white/5 hover:text-white',
+                    ].join(' ')}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </nav>
 
             <div className="mt-6 flex flex-col gap-3 border-t border-white/10 pt-6">
