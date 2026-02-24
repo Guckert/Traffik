@@ -32,7 +32,7 @@ export default function AIAgentsPage() {
         ]}
       />
 
-      {/* Hero supporting copy (moved out of HeroLeft props) */}
+      {/* Hero supporting copy */}
       <section className="border-b border-white/10">
         <div className="container mx-auto max-w-6xl px-4 py-10">
           <p className="max-w-3xl text-white/80 text-lg leading-relaxed">
@@ -189,10 +189,12 @@ export default function AIAgentsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-brand-accent mb-4">
-              Simple Pricing
+              Pricing That Matches Outcomes
             </h2>
-            <p className="text-white/70 text-lg">
-              Build once, run forever. All prices include GST.
+            <p className="text-white/70 text-lg max-w-3xl mx-auto">
+              Jess AI is built to turn missed calls into booked jobs. You pay once
+              for setup and training, then a simple weekly rate to keep her running,
+              improving, and reporting. All prices include GST.
             </p>
           </div>
 
@@ -205,13 +207,15 @@ export default function AIAgentsPage() {
               <div className="text-4xl font-bold text-white mb-2">
                 $1,500 – $3,000
               </div>
-              <p className="text-white/60 mb-6">One-time fee inc GST</p>
+              <p className="text-white/60 mb-6">
+                One-time setup inc GST — tailored to your services, scripts and data
+              </p>
               <ul className="space-y-4">
                 {[
-                  'Custom AI training on your data',
-                  'Calendar/CRM integration',
-                  'Voice personality setup',
-                  'Testing & refinement',
+                  'Custom AI training on your business data + FAQs',
+                  'Booking / calendar integration',
+                  'Call flows + upsell logic',
+                  'Testing, refinement and go-live support',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-white/75">
                     <CheckCircle className="h-5 w-5 text-brand-accent flex-shrink-0 mt-0.5" />
@@ -224,19 +228,21 @@ export default function AIAgentsPage() {
             {/* Weekly */}
             <div className="bg-white/5 rounded-2xl p-8 border-2 border-brand-accent shadow-lg relative">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-accent text-black text-sm font-semibold px-4 py-1 rounded-full">
-                Running Costs
+                Recommended
               </div>
               <div className="text-sm font-semibold text-brand-accent mb-4 uppercase tracking-wide mt-2">
-                Weekly Rate
+                Weekly Management
               </div>
               <div className="text-4xl font-bold text-white mb-2">$169</div>
-              <p className="text-white/60 mb-6">per week inc GST</p>
+              <p className="text-white/60 mb-6">
+                per week inc GST — keep Jess live, updated and improving
+              </p>
               <ul className="space-y-4">
                 {[
                   'Unlimited calls answered',
                   '24/7 availability',
-                  'System maintenance',
-                  'Monthly performance reports',
+                  'Ongoing tuning + improvements',
+                  'Monthly performance reporting',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-white/75">
                     <CheckCircle className="h-5 w-5 text-brand-accent flex-shrink-0 mt-0.5" />
@@ -249,25 +255,34 @@ export default function AIAgentsPage() {
             {/* Intro Offer */}
             <div className="bg-gradient-to-br from-white/5 to-white/0 rounded-2xl p-8 border border-white/10 relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-amber-300 text-black text-xs font-bold px-3 py-1 rounded-bl-xl">
-                LIMITED TIME
+                INTRO OFFER
               </div>
               <div className="text-sm font-semibold text-brand-accent mb-4 uppercase tracking-wide">
-                Introductory Offer
+                Get Started
               </div>
+
               <div className="text-4xl font-bold text-white mb-2">
-                $99<span className="text-lg font-normal text-white/60">/mo</span>
+                $99<span className="text-lg font-normal text-white/60">/week</span>
               </div>
-              <p className="text-white/70 mb-4">First 3 months</p>
-              <div className="h-px bg-white/10 mb-4" />
-              <p className="text-white/60 text-sm mb-6">
-                Or split the build cost over 3 months interest-free
+              <p className="text-white/70 mb-2">
+                Intro offer — first 12 weeks only
               </p>
+              <p className="text-white/60 text-sm mb-5">
+                For businesses ready to trial Jess AI before moving to the standard weekly rate.
+              </p>
+
+              <div className="h-px bg-white/10 mb-4" />
+
+              <p className="text-white/70 text-sm mb-6">
+                Prefer to spread the upfront build? We can split the setup cost across 3 months.
+              </p>
+
               <ul className="space-y-4">
                 {[
-                  'Everything in weekly plan',
-                  'Reduced setup fee options',
-                  'Priority support',
-                  'Free script revisions',
+                  'Full Jess AI functionality',
+                  'Priority onboarding',
+                  'Script revisions included',
+                  'Clear upgrade path at week 13',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-white/70">
                     <CheckCircle className="h-5 w-5 text-brand-accent flex-shrink-0 mt-0.5" />
@@ -275,7 +290,28 @@ export default function AIAgentsPage() {
                   </li>
                 ))}
               </ul>
+
+              <div className="mt-6 flex flex-col gap-3">
+                <a
+                  href="tel:+6435654900"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-accent px-5 py-3 font-semibold text-black hover:opacity-90"
+                >
+                  <Phone className="h-5 w-5" />
+                  Talk to Jess (Demo): 03 565 4900
+                </a>
+                <a
+                  href="mailto:hello@traffik.nz?subject=Jess%20AI%20Intro%20Offer"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 px-5 py-3 font-semibold text-white hover:bg-white/10"
+                >
+                  Email to start onboarding
+                </a>
+              </div>
             </div>
+          </div>
+
+          {/* small reassurance line */}
+          <div className="mt-10 text-center text-white/55 text-sm">
+            No lock-in contracts. Cancel anytime after the intro period or weekly plan.
           </div>
         </div>
       </section>
