@@ -7,14 +7,13 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  // Canonical base: https://www.traffik.nz
   metadataBase: new URL('https://www.traffik.nz'),
   title: {
     default: 'AI Website Optimisation for NZ Trades | Traffik.nz',
     template: '%s | Traffik.nz',
   },
   description:
-    'Traffik helps NZ tradies get found on Google. $159 website audit, $350 Google Business Profile optimisation, and the AI Visibility System.',
+    'Traffik helps NZ tradies get found on Google and convert leads. Jess AI (24/7 receptionist), Google Business Profile optimisation, and the AI Visibility System.',
   openGraph: {
     type: 'website',
     url: 'https://www.traffik.nz/',
@@ -45,21 +44,21 @@ export const metadata: Metadata = {
   },
 };
 
-// Google tag (gtag.js) ID – central ID that routes to GA4 + Ads destinations
+// Google tag (gtag.js) ID
 const GOOGLE_TAG_ID = 'GT-TNC3NJQH';
 
 // Meta Pixel
 const META_PIXEL_ID = '731994975939671';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  // Single JSON-LD graph (Organization + LocalBusiness + WebSite)
+  // JSON-LD graph (Organization + LocalBusiness + WebSite)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'Organization',
         '@id': 'https://www.traffik.nz/#org',
-        name: 'Traffik',
+        name: 'Traffik AI Web Optimisation Limited',
         url: 'https://www.traffik.nz/',
         logo: 'https://www.traffik.nz/logo.png',
         sameAs: [],
@@ -67,23 +66,41 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           {
             '@type': 'ContactPoint',
             telephone: '+64-21-296-8586',
-            contactType: 'customer support',
+            contactType: 'sales',
             areaServed: 'NZ',
             availableLanguage: ['en'],
           },
         ],
       },
       {
-        // Service-area business: no street/postcode
         '@type': 'LocalBusiness',
         '@id': 'https://www.traffik.nz/#local',
         name: 'Traffik — AI Web Optimisation',
         url: 'https://www.traffik.nz/',
         image: 'https://www.traffik.nz/og-image.jpg',
-        priceRange: '$$',
         telephone: '+64-21-296-8586',
+        email: 'hello@traffik.nz',
 
-        areaServed: { '@type': 'Country', name: 'New Zealand' },
+        // Keep priceRange aligned with current offerings (GST inclusive)
+        priceRange: '$99-$3450',
+
+        // NAP (you provided a physical address)
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '6 Nancy Avenue, Mairehau',
+          addressLocality: 'Christchurch',
+          addressRegion: 'Canterbury',
+          postalCode: '8013',
+          addressCountry: 'NZ',
+        },
+
+        // Service area signals
+        areaServed: [
+          { '@type': 'Country', name: 'New Zealand' },
+          { '@type': 'AdministrativeArea', name: 'Canterbury' },
+          { '@type': 'City', name: 'Christchurch' },
+        ],
+        // (Optional extra signal used by some parsers)
         serviceArea: [
           { '@type': 'AdministrativeArea', name: 'Christchurch' },
           { '@type': 'AdministrativeArea', name: 'Canterbury' },
@@ -99,30 +116,66 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         ],
 
         parentOrganization: { '@id': 'https://www.traffik.nz/#org' },
+
         hasOfferCatalog: {
           '@type': 'OfferCatalog',
           name: 'Services',
           itemListElement: [
             {
               '@type': 'Offer',
-              name: 'AI Website Audit — $159',
-              price: '159.00',
+              name: 'Jess AI — Setup & Training',
               priceCurrency: 'NZD',
-              url: 'https://www.traffik.nz/audit',
+              priceSpecification: {
+                '@type': 'PriceSpecification',
+                minPrice: 1500,
+                maxPrice: 3000,
+                priceCurrency: 'NZD',
+                valueAddedTaxIncluded: true,
+              },
+              url: 'https://www.traffik.nz/ai-agents',
+              availability: 'https://schema.org/InStock',
             },
             {
               '@type': 'Offer',
-              name: 'Google Business Profile Optimisation — $350',
+              name: 'Jess AI — Weekly Management',
+              priceCurrency: 'NZD',
+              priceSpecification: {
+                '@type': 'PriceSpecification',
+                price: 169,
+                priceCurrency: 'NZD',
+                valueAddedTaxIncluded: true,
+              },
+              url: 'https://www.traffik.nz/ai-agents#pricing',
+              availability: 'https://schema.org/InStock',
+            },
+            {
+              '@type': 'Offer',
+              name: 'Jess AI — Introductory Rate (first 12 weeks)',
+              priceCurrency: 'NZD',
+              priceSpecification: {
+                '@type': 'PriceSpecification',
+                price: 99,
+                priceCurrency: 'NZD',
+                valueAddedTaxIncluded: true,
+              },
+              url: 'https://www.traffik.nz/ai-agents#pricing',
+              availability: 'https://schema.org/LimitedAvailability',
+            },
+            {
+              '@type': 'Offer',
+              name: 'Google Business Profile Optimisation',
               price: '350.00',
               priceCurrency: 'NZD',
               url: 'https://www.traffik.nz/gbp',
+              availability: 'https://schema.org/InStock',
             },
             {
               '@type': 'Offer',
-              name: 'AI Visibility System — $3,450/month',
+              name: 'AI Visibility System',
               price: '3450.00',
               priceCurrency: 'NZD',
               url: 'https://www.traffik.nz/ai-visibility',
+              availability: 'https://schema.org/InStock',
             },
           ],
         },
@@ -160,8 +213,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           crossOrigin="use-credentials"
         />
       </head>
+
       <body className="bg-black text-white">
-        {/* Google tag (gtag.js) – single tag for GA4 + Ads */}
+        {/* Google tag (gtag.js) */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}`}
           strategy="afterInteractive"
@@ -171,13 +225,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-
-            // Google tag config (GT ID from Data Manager)
             gtag('config', '${GOOGLE_TAG_ID}');
           `}
         </Script>
 
-        {/* Meta Pixel base code */}
+        {/* Meta Pixel */}
         <Script id="meta-pixel" strategy="afterInteractive">
           {`
             !(function(f,b,e,v,n,t,s)
@@ -193,7 +245,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           `}
         </Script>
 
-        {/* Noscript fallback for pixel */}
+        {/* Noscript fallback */}
         <noscript>
           <img
             height="1"
