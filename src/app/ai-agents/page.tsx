@@ -96,7 +96,7 @@ const jsonLd = {
           acceptedAnswer: {
             '@type': 'Answer',
             text:
-              'Typically 2–3 weeks from consultation to go-live depending on your booking systems and business complexity.',
+              'Typically 1–2 weeks from consultation to go-live depending on your booking systems and business complexity.',
           },
         },
         {
