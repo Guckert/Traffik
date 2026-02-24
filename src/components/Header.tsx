@@ -7,34 +7,52 @@ import { useEffect, useRef, useState } from 'react';
 /* --- tiny inline icons (no external deps) --- */
 const PhoneIcon = (props: any) => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
-    <path d="M6.7 2.8a2 2 0 0 1 2.3 1.1l1.1 2.6a2 2 0 0 1-.5 2.2l-1 1a14.5 14.5 0 0 0 6.7 6.7l1-1a2 2 0 0 1 2.2-.5l2.6 1.1a2 2 0 0 1 1.1 2.3l-.4 1.4a2.5 2.5 0 0 1-2.4 1.8A19.5 19.5 0 0 1 3.7 5.2 2.5 2.5 0 0 1 5.5 2.8z" stroke="currentColor" strokeWidth="1.6" />
+    <path
+      d="M6.7 2.8a2 2 0 0 1 2.3 1.1l1.1 2.6a2 2 0 0 1-.5 2.2l-1 1a14.5 14.5 0 0 0 6.7 6.7l1-1a2 2 0 0 1 2.2-.5l2.6 1.1a2 2 0 0 1 1.1 2.3l-.4 1.4a2.5 2.5 0 0 1-2.4 1.8A19.5 19.5 0 0 1 3.7 5.2 2.5 2.5 0 0 1 5.5 2.8z"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    />
   </svg>
 );
 
 const MailIcon = (props: any) => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
-    <path d="M3.5 6.5h17a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 16V8a1.5 1.5 0 0 1 1.5-1.5z" stroke="currentColor" strokeWidth="1.6"/>
+    <path
+      d="M3.5 6.5h17a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 16V8a1.5 1.5 0 0 1 1.5-1.5z"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    />
     <path d="M4 8l8 5 8-5" stroke="currentColor" strokeWidth="1.6" />
   </svg>
 );
 
 const MenuIcon = (props: any) => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
-    <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    <path
+      d="M3 6h18M3 12h18M3 18h18"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
   </svg>
 );
 
 const CloseIcon = (props: any) => (
   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
-    <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    <path
+      d="M6 6l12 12M18 6L6 18"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
   </svg>
 );
 
-/* --- helpers --- */
+/* --- nav --- */
 const nav = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
-  { label: 'AI Agents', href: '/ai-agents' },
+  { label: 'AI Agents', href: '/ai-agents' }, // ✅ new
   { label: 'GBP', href: '/gbp' },
   { label: 'AI Visibility', href: '/ai-visibility' },
   { label: 'Service Area', href: '/service-area' },
@@ -43,53 +61,68 @@ const nav = [
 
 function isActive(pathname: string, href: string) {
   if (href === '/') return pathname === '/';
-  return pathname.startsWith(href);
+  return pathname === href || pathname.startsWith(href + '/');
 }
 
-export default function Header() {
+export default function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const panelRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
 
   // lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [open]);
 
   // close drawer on route change
-  useEffect(() => { setOpen(false); }, [pathname]);
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
-  // Esc to close + basic focus trap
+  // Esc to close + basic focus trap when open
   useEffect(() => {
     if (!open) return;
-    const el = panelRef.current;
-    const getFocusables = () => el?.querySelectorAll<HTMLElement>(
-      'a,button,textarea,input,select,summary,[tabindex]:not([tabindex="-1"])'
-    ) ?? ([] as unknown as NodeListOf<HTMLElement>);
 
+    const el = panelRef.current;
+    const getFocusables = () =>
+      el?.querySelectorAll<HTMLElement>(
+        'a,button,textarea,input,select,summary,[tabindex]:not([tabindex="-1"])'
+      ) ?? ([] as unknown as NodeListOf<HTMLElement>);
+
+    // send focus to first focusable
     const focusables = getFocusables();
     focusables[0]?.focus();
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { setOpen(false); return; }
+      if (e.key === 'Escape') {
+        setOpen(false);
+        return;
+      }
       if (e.key !== 'Tab') return;
+
       const items = getFocusables();
       if (!items.length) return;
+
       const first = items[0];
       const last = items[items.length - 1];
       const active = document.activeElement as HTMLElement | null;
 
       if (e.shiftKey) {
         if (active === first || !el?.contains(active)) {
-          e.preventDefault(); last.focus();
+          e.preventDefault();
+          last.focus();
         }
       } else {
         if (active === last || !el?.contains(active)) {
-          e.preventDefault(); first.focus();
+          e.preventDefault();
+          first.focus();
         }
       }
     };
+
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
@@ -99,21 +132,26 @@ export default function Header() {
       <div className="container mx-auto flex items-center justify-between gap-4 px-4 py-3">
         {/* Brand */}
         <Link href="/" className="group flex items-baseline gap-2">
-          <span className="text-xl font-extrabold tracking-wide text-brand-accent group-hover:opacity-90">TRAFFIK</span>
-          <span className="hidden text-xs font-semibold uppercase text-white/70 sm:block">AI WEB OPTIMISATION</span>
-          <span className="hidden text-[10px] uppercase tracking-widest text-white/40 md:block">LIMITED</span>
+          <span className="text-xl font-extrabold tracking-wide text-brand-accent group-hover:opacity-90">
+            TRAFFIK
+          </span>
+          <span className="hidden text-xs font-semibold uppercase text-white/70 sm:block">
+            AI WEB OPTIMISATION
+          </span>
         </Link>
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-6 lg:flex">
           {nav.map((item) => (
-            <Link 
-              key={item.href} 
+            <Link
+              key={item.href}
               href={item.href}
               aria-current={isActive(pathname, item.href) ? 'page' : undefined}
               className={[
-                'text-sm',
-                isActive(pathname, item.href) ? 'text-white font-semibold' : 'text-white/80 hover:text-white'
+                'text-sm transition-colors',
+                isActive(pathname, item.href)
+                  ? 'text-white'
+                  : 'text-white/70 hover:text-white',
               ].join(' ')}
             >
               {item.label}
@@ -123,15 +161,15 @@ export default function Header() {
 
         {/* Desktop Actions */}
         <div className="hidden items-center gap-2 lg:flex">
-          <a 
-            href="tel:+64212968586" 
+          <a
+            href="tel:+64212968586"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-sm text-white/90 hover:bg-white/10"
           >
             <PhoneIcon className="h-4 w-4" />
             021 296 8586
           </a>
-          <a 
-            href="mailto:hello@traffik.nz" 
+          <a
+            href="mailto:hello@traffik.nz"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-sm text-white/90 hover:bg-white/10"
           >
             <MailIcon className="h-4 w-4" />
@@ -154,9 +192,9 @@ export default function Header() {
       {/* Mobile drawer */}
       {open && (
         <>
-          <div 
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden" 
-            onClick={() => setOpen(false)} 
+          <div
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+            onClick={() => setOpen(false)}
           />
           <div
             ref={panelRef}
@@ -173,7 +211,7 @@ export default function Header() {
                 <CloseIcon className="h-5 w-5" />
               </button>
             </div>
-            
+
             <nav className="flex flex-col gap-2">
               {nav.map((item) => (
                 <Link
@@ -182,26 +220,26 @@ export default function Header() {
                   onClick={() => setOpen(false)}
                   className={[
                     'rounded-lg px-4 py-3 text-base',
-                    isActive(pathname, item.href) 
-                      ? 'bg-white/10 font-semibold text-white' 
-                      : 'text-white/80 hover:bg-white/5 hover:text-white'
+                    isActive(pathname, item.href)
+                      ? 'bg-white/10 font-semibold text-white'
+                      : 'text-white/80 hover:bg-white/5 hover:text-white',
                   ].join(' ')}
                 >
                   {item.label}
                 </Link>
               ))}
             </nav>
-            
+
             <div className="mt-6 flex flex-col gap-3 border-t border-white/10 pt-6">
-              <a 
-                href="tel:+64212968586" 
+              <a
+                href="tel:+64212968586"
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 px-4 py-3 text-sm text-white/90 hover:bg-white/10"
               >
                 <PhoneIcon className="h-4 w-4" />
                 021 296 8586
               </a>
-              <a 
-                href="mailto:hello@traffik.nz" 
+              <a
+                href="mailto:hello@traffik.nz"
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 px-4 py-3 text-sm text-white/90 hover:bg-white/10"
               >
                 <MailIcon className="h-4 w-4" />
@@ -214,4 +252,3 @@ export default function Header() {
     </div>
   );
 }
-
