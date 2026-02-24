@@ -417,7 +417,7 @@ export default function AIAgentsPage() {
             {[
               {
                 q: 'How long does setup take?',
-                a: 'Typically 2–3 weeks from initial consultation to going live, depending on complexity of your booking systems and data.',
+                a: 'Typically 1–2 weeks from initial consultation to going live, depending on complexity of your booking systems and data.',
               },
               {
                 q: 'What phone systems does Jess work with?',
