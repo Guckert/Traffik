@@ -12,7 +12,7 @@ export default function HomePage() {
         subtitle="Jess AI answers calls 24/7, books appointments, sends reminders, and upsells your services — trained on your business and data."
         ctas={[
           { label: 'View Jess AI', href: '/ai-agents' },
-          { label: 'Call Demo — 03 565 4900', href: 'tel:035654900' },
+          { label: 'Call Demo — 03 661 7222', href: 'tel:035654900' },
           { label: 'GBP Optimisation — $350', href: '/gbp' },
         ]}
       />
@@ -78,7 +78,7 @@ export default function HomePage() {
                   href="tel:035654900"
                   className="inline-flex items-center justify-center rounded-full border border-white/20 px-4 py-2 text-sm text-white/90 hover:bg-white/10"
                 >
-                  Call Demo: 03 565 4900
+                  Call Demo: 03 661 7222
                 </a>
               </div>
             </div>
