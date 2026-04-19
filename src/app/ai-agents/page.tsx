@@ -156,7 +156,7 @@ export default function AIAgentsPage() {
         title="Meet Jess AI"
         subtitle="Your 24/7 AI Receptionist"
         ctas={[
-          { label: 'Call Jess AI: 03 565 4900', href: 'tel:+6435654900' },
+          { label: 'Call Jess AI: 03 661 7222', href: 'tel:+6435654900' },
           { label: 'View Pricing', href: '#pricing' },
         ]}
       />
@@ -187,7 +187,7 @@ export default function AIAgentsPage() {
             href="tel:+6435654900"
             className="text-white hover:text-emerald-300 font-semibold transition-colors"
           >
-            03 565 4900
+            03 661 7222
           </a>
         </div>
       </section>
@@ -366,7 +366,7 @@ export default function AIAgentsPage() {
                   className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-accent px-5 py-3 font-semibold text-black hover:opacity-90"
                 >
                   <Phone className="h-5 w-5" />
-                  Talk to Jess (Demo): 03 565 4900
+                  Talk to Jess (Demo): 03 661 7222
                 </a>
                 <a
                   href="mailto:hello@traffik.nz?subject=Jess%20AI%20Intro%20Offer"
@@ -399,7 +399,7 @@ export default function AIAgentsPage() {
             className="inline-flex items-center gap-4 bg-brand-accent text-black text-2xl md:text-3xl font-bold px-10 py-6 rounded-full hover:opacity-90 transition-all hover:scale-105 shadow-2xl"
           >
             <Phone className="h-8 w-8" />
-            03 565 4900
+            03 661 7222
           </a>
           <p className="mt-6 text-white/60 text-sm">
             Demo available 24/7 • Standard call rates apply • Based in NZ
